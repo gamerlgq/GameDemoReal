@@ -35,7 +35,7 @@ export class SpineComponentBase extends ComponentBase {
 
     private _animiateEventCallback: yy.interfaces.SpineFrameEventCallFunc = null;
 
-    private _mixTime = 0.2; //动作融合时间
+    private _mixTime = 0.1; //动作融合时间
 
     onLoad () {
         this._init();

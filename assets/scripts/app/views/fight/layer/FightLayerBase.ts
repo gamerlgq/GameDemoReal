@@ -9,7 +9,7 @@ export class FightLayerBase extends ComponentBase {
     _mainWorld:FightMainWorld = null
 
     onLoad(){
-        this._mainWorld = this.node.parent as FightMainWorld;
+        this._mainWorld = this.node.parent as FightMainWorld;;
     }
 
     public startGame(){

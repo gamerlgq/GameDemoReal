@@ -2,55 +2,41 @@
  * 生产角色spine工厂方法
  */
 
-import { instantiate, Prefab } from "cc";
+import { instantiate, Node, Prefab } from "cc";
 import { ResourcesLoader } from "../../../../framework/data/ResourcesLoader";
 import { viewRegisterMgr } from "../../../define/ViewRegisterMgr";
 import { HeroSpineNode, MonsterSpineNode, SpineNodeBase } from "./SpineNodeBase";
 
-export interface HeroCreateCallback {
-    (node:HeroSpineNode):void
-}
-
-export interface MonsterCreateCallback {
-    (node:MonsterSpineNode):void
-}
-
-
-type ClassParameters<T> = T extends new(...args: infer P) => any ? P : never;
+// 工厂方法
+const factory = <T extends typeof SpineNodeBase>(cls: T, node:Node) =>
+    new cls(node) as InstanceType<T>;
 
 export class RoleSpineFactory {
     /**
-     * @description 创建武将
-     * @param id 
-     * @param callback 返回武将节点
+     * 
+     * @param cls 类型 HeroSpineNode or MonsterSpineNode 继承SpineNodeBase
+     * @param id number
+     * @returns 异步函数
+     * @example 
+     * onLoad(){
+     *    this._loadAttackers();
+     * }
+     * 
+     * private async _loadAttackers(){
+     *     let node = await RoleSpineFactory.create(HeroSpineNode,heroId);  
+     *     this.node.addChild(node); 
+     * }
      */
-    public static createHeroSpineById(id:number,callback:HeroCreateCallback):void{
+    public static async create<T extends typeof SpineNodeBase>(cls:T,id:number){
+        let node = await RoleSpineFactory._loadPromise(id);
+        return factory(cls,node);        
+    }
+
+    private static async _loadPromise(id:number):Promise<Node>{
         let info = viewRegisterMgr.getViewInfo("hero","HeroSpinePrefab");
         let file = info.Path + "hero_" + id.toString();
-        RoleSpineFactory._load(file,callback);
-    }
-
-    // 
-       /**
-     * @description 创建怪物
-     * @param id 
-     * @param callback 返回怪物节点
-     */
-    public static createMonsterSpineById(id:number,callback:MonsterCreateCallback) {
-        
-    }
-
-    private static _load(fileUrl,callback:HeroCreateCallback):void{
-        ResourcesLoader.load(fileUrl,(prefab:Prefab)=>{
-            let spineNode = instantiate(prefab);
-            let node = new HeroSpineNode(spineNode);
-            if (callback){
-                callback(node);
-            }
-        })
-    }
-
-    public static create<T extends typeof SpineNodeBase>(cls:T,){
-
+        let prefab:Prefab = await ResourcesLoader.loadPromise(file,Prefab);
+        let spineNode = instantiate(prefab);
+        return spineNode;
     }
 }

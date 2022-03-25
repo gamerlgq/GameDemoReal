@@ -6,17 +6,23 @@
  * @Description: file content
  */
 
-import { _decorator, Prefab, instantiate, Node, js, sys, JsonAsset, log } from 'cc';
+import { _decorator, Prefab, instantiate, Node, js, sys, JsonAsset, log, director, TweenSystem, AnimationManager } from 'cc';
 import { ResourcesLoader } from '../../../framework/data/ResourcesLoader';
+import { Message } from '../../../framework/listener/Message';
 import { LayerBase } from '../../../framework/ui/LayerBase';
+import { Protocol } from '../../define/define';
 import { viewRegisterMgr } from '../../define/ViewRegisterMgr';
-import { FightDataMgr } from './data/FightDataMgr';
+import { fightActionMgr, FightActionMgr } from './action/FightActionMgr';
+import { FightData } from './data/FightData';
+import { fightDataMgr, FightDataMgr } from './data/FightDataMgr';
 import { FightEvent } from './event/FightEvent';
 import { fightEventMgr,FightEventMgr } from './event/FightEventMgr';
+import { fightBloodMgr, FightBloodMgr } from './FightBloodMgr';
 import { FightConstant } from './FightConstant';
 import { fightController,FightController } from './FightController';
 import { FightMainUI } from './FightMainUI';
 import { FightMainWorld } from './FightMainWorld';
+import { fightPlayer, FightPlayer } from './FightPlayer';
 const { ccclass, property } = _decorator;
  
 @ccclass('FightMainLayer')
@@ -26,6 +32,7 @@ export class FightMainLayer extends LayerBase {
     private _fightMainUI:FightMainUI = null;
     private _content:Node = null;
     private _rootNode:Node = null;
+    private _gameSpeed:number = 1;
 
     onLoad () {
         super.onLoad();
@@ -46,12 +53,18 @@ export class FightMainLayer extends LayerBase {
 
     private _initManagers(report:JsonAsset) {
         // 战报数据管理器
-        FightDataMgr.init(report);
+        FightDataMgr.init();
+        fightDataMgr.parse(report,FightData);
         // 事件派发器
         FightEventMgr.init();
         // 回合控制器
         FightController.init();
         // 战斗播放器
+        FightPlayer.init();
+        // action管理器
+        FightActionMgr.init(this);
+        // 飘血管理器
+        FightBloodMgr.init(this);
     }
 
     private _initBg() {
@@ -75,6 +88,7 @@ export class FightMainLayer extends LayerBase {
 
     private _addListeners() {
         fightEventMgr.addEventListener(FightConstant.FightEvent.Game_Star,this._startGame.bind(this));
+        this.addMsgListener(Protocol.Inner.SetAnimationSpeed,this._setSpeed.bind(this));
     }
 
     private _startGame(event:FightEvent) {
@@ -82,13 +96,33 @@ export class FightMainLayer extends LayerBase {
         this._fightMainUI.startGame();
     }
 
+    /**
+     * @return FightMainWorld
+     */
+    public getFightMainWorld():FightMainWorld {
+        return this._fightMainWorld;
+    }
+
     update (dt: number) {
-        // log(this._fightMainWorld);
         this._fightMainWorld?.tick(dt);
+
+        if (this._gameSpeed == 2){
+            director.getSystem(TweenSystem.ID).update(dt);
+            director.getSystem(AnimationManager.ID).update(dt);
+        }
     }
 
     onDestroy(){
+        fightDataMgr.destory();
         fightEventMgr.destory();
         fightController.destory();
+        fightPlayer.destory();
+        fightActionMgr.destory();
+        fightBloodMgr.destory();
+    }
+
+    private _setSpeed(event:Message) {
+        let data = event.getRawData();
+        this._gameSpeed = data;
     }
 }

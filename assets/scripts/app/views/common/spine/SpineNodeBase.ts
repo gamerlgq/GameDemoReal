@@ -8,11 +8,39 @@
 
 import { _decorator,Node, sp, Prefab, instantiate, Vec3, log } from 'cc';
 import { ResourcesLoader } from '../../../../framework/data/ResourcesLoader';
+import { yy } from '../../../define/YYNamespace';
+import { FightConstant } from '../../fight/FightConstant';
 import { SpineComponentBase } from './SpineComponentBase';
 
 const { ccclass } = _decorator;
 @ccclass
 export class SpineNodeBase extends Node {
+
+    // 阵型孔位
+    private _formationIndex:number;
+
+    // 阵营
+    private _camp:number;
+    
+    public set formationIndex(v : number) {
+        this._formationIndex = v;
+    }
+    
+    public get formationIndex() : number {
+        return this._formationIndex
+    }
+    
+    
+    public get camp() : number {
+        return this._camp
+    }
+
+    
+    public set camp(v : number) {
+        this._camp = v;
+    }
+    
+    
 
     private _spineCom:SpineComponentBase = null; 
 
@@ -85,9 +113,31 @@ export class SpineNodeBase extends Node {
     public changeEquip(skinName:string,oldSlotName:string,newSlotName:string){
         this._spineCom.changeEquip(skinName,oldSlotName,newSlotName);
     }
+
+    /** 动画开始回调 */
+    public setAnimateStartCallback(callback:yy.interfaces.SpineTrackEntryCallFunc) {
+        this._spineCom.setAnimateStartCallback(callback);
+    }
+
+    /** 动画结束回调 */
+    public setAnimateEndCallback(callback: yy.interfaces.SpineTrackEntryCallFunc) {
+        this._spineCom.setAnimateEndCallback(callback);
+    }
+
+    /** 动画被打断回调 */
+    public setAnimateInterruptCallback(callback: yy.interfaces.SpineTrackEntryCallFunc) {
+        this._spineCom.setAnimateInterruptCallback(callback);
+    }
+
+    /** 动画事件回调 */
+    public setAnimateEventCallback(callback) {
+        this._spineCom.setAnimateEventCallback(callback);
+    }
 }
 
 // 武将
-export class HeroSpineNode extends SpineNodeBase {}
+export class HeroSpineNode extends SpineNodeBase {
+}
 // 敌方
-export class MonsterSpineNode extends SpineNodeBase {}
+export class MonsterSpineNode extends SpineNodeBase {
+}

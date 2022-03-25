@@ -7,6 +7,8 @@
  */
 import { log } from "cc";
 import { Singleton } from "../../../framework/components/Singleton";
+import { FightData } from "./data/FightData";
+import { fightDataMgr } from "./data/FightDataMgr";
 import { FightEvent } from "./event/FightEvent";
 import { FightEventDataType } from "./event/FightEventDataType";
 import { fightEventMgr } from "./event/FightEventMgr";
@@ -22,6 +24,12 @@ export class FightController extends Singleton{
     private _round:number=0;
     // 当前行动(每回合有多个)
     private _action:number=0;
+    // fight data
+    private _fightData:FightData;
+    // cur round data
+    private _roundData:Array<Array<any>>;
+    // 是否暂停
+    private _isPause:boolean=false;
 
     public static init(){
         fightController = FightController.getInstance<FightController>();
@@ -29,39 +37,112 @@ export class FightController extends Singleton{
     }
 
     private _init(){
-        fightEventMgr.addEventListener(FightConstant.FightEvent.Game_Star,this._start.bind(this));
+        this._initListeners();
+        this._initData();
     }
 
-    private _start(){
+    private _initListeners() {
+        fightEventMgr.addEventListener(FightConstant.FightEvent.Game_Star,this._onGameStart.bind(this));
+        fightEventMgr.addEventListener(FightConstant.FightEvent.Action_End,this._onActionEnd.bind(this));
+        fightEventMgr.addEventListener(FightConstant.FightEvent.Game_Replay,this._onReplay.bind(this));
+        fightEventMgr.addEventListener(FightConstant.FightEvent.Game_Pause,this._onPause.bind(this));
+        fightEventMgr.addEventListener(FightConstant.FightEvent.Game_Resume,this._onResume.bind(this));
+    }
+
+    private _initData(){
+
+        this._round = 0 ;
+        this._action = 0
+        this._isPause = false;
+
+        this._fightData = fightDataMgr.getFightData(FightData);
+        let data = this._fightData.getRoundData();
+        this._roundData = data[this._round];
+    }
+
+    // 游戏开始
+    private _onGameStart(){
         this._roundStart();
     }
 
+    // 每回合小行动结束
+    private _onActionEnd() {
+        this._action += 1;
+        this._actionStart();
+    }
+
+    // 重播
+    private _onReplay(){
+        this._initData();
+        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Game_Star,null));
+    }
+
+    // 暂停
+    private _onPause(){
+        this._isPause = true;
+    }
+
+    // 恢复
+    private _onResume(){
+        this._isPause = false;
+    }
+
+    // 大回合开始
     private _roundStart() {
+        let data = this._fightData.getRoundData();
+        this._roundData = data[this._round];
         this._round += 1;//回合数+1
         this._action = 0;//每回合归零
+        if (this._isGameEnd()){
+            return this._gameEnd();
+        }
+        this._nextRound();
+    }
+
+    private _nextRound(){
         let data:FightEventDataType.Round_Start = {
             Round: this._round
         }
-        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Round_Start,data))
+        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Round_Start,data));
         this._actionStart()
     }
 
+    // 每回合小行动开始
     private _actionStart() {
-        this._action += 1;
-
-
+        if (this._isRoundFinished()){
+            return this._roundEnd();
+        }
+        this._nextAction();
     }
 
-    public replay(){
-
+    private _nextAction() {
+        let action = this._roundData[this._action];
+        let data:FightEventDataType.Action_Start = {
+            Action: this._action,
+            ActionData: action
+        }
+        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Action_Star,data));
     }
 
-    public pause(){
-
+    // 是否大回合结束
+    private _isRoundFinished():boolean {
+        return this._action >= this._roundData.length
     }
 
-    public resume(){
+    // 大回合结束
+    private _roundEnd() {
+        this._roundStart();
+    }
 
+    // 是否战斗结束
+    private _isGameEnd(){
+        let data = this._fightData.getRoundData();
+        return this._round > data.length;
+    }
+
+    // 战斗结束
+    private _gameEnd() {
+        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Game_End,null));
     }
 
     public destory(){

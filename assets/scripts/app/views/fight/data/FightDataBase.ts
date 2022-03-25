@@ -142,4 +142,12 @@ export class FightDataBase {
     public getFightReprotType(){
         return this._fightData!.t;        
     }
+
+    /**
+     * 
+     * @returns 返回回合集合
+     */
+    public getRoundData():Array<Array<any>>{
+        return this._fightData!.r;
+    }
 }

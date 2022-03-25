@@ -19,7 +19,10 @@ export class DataRegisterMgr extends Singleton{
          * @param [3] parser new xxx_parser() //多语言解析器;
          */
         Test:["Test","test/datas/test",[],new Test_Parser()],
-        Translate:["Translate","translate/data/translate",[]]
+        Translate:["Translate","translate/data/translate",[]],
+        FightSkill:["FightSkill","fight/datas/skill/skill_",[1,1]],
+        FightHit:["FightHit","fight/datas/hit/hit_",[1,1]],
+        FightEmbattled:["FightEmbattled","fight/datas/embattled/embattled_",[1,1]]
     }
 
     loadAllData(doneFunc: () => void) {

@@ -7,39 +7,42 @@
  */
 import { JsonAsset } from "cc";
 import { Singleton } from "../../../../framework/components/Singleton";
-import { FightData } from "./FightData";
 import { FightDataBase } from "./FightDataBase";
 
+const Parse = <T extends typeof FightDataBase>(report:JsonAsset,clas:T) => 
+        new clas(report) as InstanceType<T>;
 
 export let fightDataMgr:FightDataMgr = null;
 
 export class FightDataMgr extends Singleton{
+
+    private _reportData:any;
     
-    private _reportData:FightDataBase = null;
-
-    public static init(report:JsonAsset){
+    public static init(){
         fightDataMgr = FightDataMgr.getInstance<FightDataMgr>();
-        fightDataMgr._init(report);
-    }
-
-    private _init(report:JsonAsset){
-        this.parse<FightData>(report)
     }
     
     /**
      * @description 解析战报
      * @param data 战报数据
      */
-    public parse<T extends FightDataBase>(report:JsonAsset) {
-        let data = new FightDataBase(report);
-        this._reportData = data as T;
+    public parse<T extends typeof FightDataBase>(report:JsonAsset,clas:T,isNotCache?:boolean):InstanceType<T>{
+        let rp = Parse(report,clas);
+        // 默认缓存
+        if (!isNotCache){
+            this._reportData = rp;
+            this._reportData as InstanceType<T>;
+        }
+        return rp
     }
 
     /**
-     * getFightData
+     * 
+     * @param clas T extends typeof FightDataBase
+     * @returns intstances of clas
      */
-    public getFightData():FightDataBase {
-        return this._reportData
+    public getFightData<T extends typeof FightDataBase>(clas:T):InstanceType<T> {
+        return this._reportData;
     }
 
     public destory(){
@@ -50,29 +53,3 @@ export class FightDataMgr extends Singleton{
         fightDataMgr = null;
     }
 }
-
-class Parent {
-    constructor(protected foo: string) { }
-
-    static create(fooProvider: { foo: string }) {
-        return new this(fooProvider.foo)
-    }
-}
-
-// type ClassParameters<T> = T extends new (...args: infer P) => any ? P : never
-
-// const factory = <T extends typeof Parent>(clas: T, args: { foo: ClassParameters<T>[0] }) =>
-//     clas.create(args) as InstanceType<T>
-
-// class Child extends Parent {
-//     logFoo() {
-//         console.log(this.foo);
-//     }
-// }
-
-
-// const instance = Child.create({ foo: 'bar' });
-
-// const result = factory(Child, { foo: 'bar' }).logFoo()
-
-// const expectedError = factory(class A { }, { foo: 'bar' }).logFoo()

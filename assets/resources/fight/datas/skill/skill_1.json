@@ -1,0 +1,8 @@
+{
+    "name":"物理攻击",
+    "skillAnimation":"1",
+    "embattledAnimation":"1",
+    "dodgeAnimation":"1",
+    "blockAnimation":"1",
+    "hitbackAnimation":"1"
+}

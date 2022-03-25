@@ -6,7 +6,7 @@
  * @Description: file content
  */
 
-import { _decorator, Component, Node, EventTouch, log, AnimationComponent, Button, director, AnimationManager, game, Label, CCInteger, CCFloat, js, Sprite } from 'cc';
+import { _decorator, Node, EventTouch, AnimationComponent, Button, Label, CCFloat, js, Sprite, } from 'cc';
 import { sceneMgr } from '../../../framework/core/SceneMgr';
 import { socketMgr } from '../../../framework/net/SocketMgr';
 import { ComponentBase } from '../../../framework/ui/ComponentBase';
@@ -95,7 +95,7 @@ export class FightMainUI extends ComponentBase {
     }
 
     update(dt:number){
-        
+
     }
 
     onClickSpeedBtn(event:EventTouch,customEventData:string){
