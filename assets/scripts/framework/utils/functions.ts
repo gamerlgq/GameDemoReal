@@ -33,3 +33,7 @@ export function posAdd(node: Node, offPos: Vec2, minX?: number, maxX?: number, m
 
     node.position = v3(x || node.position.x, y || node.position.y)
 }
+
+export function v2ToV3(v2:Vec2) {
+    return v3(v2.x, v2.y,0)
+}
