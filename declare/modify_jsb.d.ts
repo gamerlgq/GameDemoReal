@@ -641,5 +641,7 @@ declare namespace jsb {
          *  @return  The path that can be write/read a file in
          */
         export function getWritablePath ():string;
+        export function getDataFromFile(path);
+        
     }
 }

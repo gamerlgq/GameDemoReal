@@ -59,6 +59,10 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
                 "netloading": {
                     path: "common_ui/prefabs/netinstable",
                     isCache: true
+                },
+                "TouchEffect": {
+                    path: "common_ui/prefabs/TouchEffect",
+                    isCache: true
                 }
             },
         },

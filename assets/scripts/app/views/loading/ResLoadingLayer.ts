@@ -29,7 +29,7 @@ export class ResLoadingLayer extends Component {
     }
     
     private _startPreload() {
-        ResourcesLoader.loadList(this._loadingResList,(finishNum:number,maxNum:number,data:any)=>{
+        ResourcesLoader.loadList(this._loadingResList,(finishNum:number,maxNum:number)=>{
             let oldVal = this.bar.progress;
             let newVal = finishNum / maxNum;
             if (newVal < oldVal) {

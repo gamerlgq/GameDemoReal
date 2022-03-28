@@ -1,0 +1,1 @@
+node ./version_generator.js -v 1.0.1 -u http://127.0.0.1:9000/remote-assets/ -s ./build/mac/assets -d ./build/mac/assets

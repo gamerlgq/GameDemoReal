@@ -14,7 +14,7 @@ import { netLoadingMgr } from "../net/NetLoadingMgr";
 type UnionAsset = Asset | AssetManager.RequestItem[]
 
 type FileCallback<T extends UnionAsset> = {
-    (data:T):void
+    (data: T): void
 }
 
 export class ResourcesLoader {
@@ -25,7 +25,7 @@ export class ResourcesLoader {
     private static _CacheMaxMemory = 1024;
 
     // 下载资源
-    static preload(path: string | string[], doneFunc:FileCallback<UnionAsset>) {
+    static preload(path: string | string[], doneFunc: FileCallback<UnionAsset>) {
         resources.preload(path, (err, dataAsset) => {
             if (err) {
                 error("ResourcesLoader preload error:", err.message);
@@ -37,8 +37,8 @@ export class ResourcesLoader {
     /**
      * @description resources需要动态加载的资源(使用此方法，需要手动管理资源释放)
      */
-    static load(path: string, doneFunc:FileCallback<UnionAsset>, type?:typeof Asset) {
-        if ( type == undefined ) {
+    static load(path: string, doneFunc: FileCallback<UnionAsset>, type?: typeof Asset) {
+        if (type == undefined) {
             resources.load(path, (err, dataAsset) => {
                 if (err) {
                     error("ResourcesLoader load error:", err.message);
@@ -46,33 +46,33 @@ export class ResourcesLoader {
                 doneFunc(dataAsset);
             });
             return;
-        } 
+        }
 
         resources.load(path, type, (err, dataAsset) => {
             if (err) {
-                error("ResourcesLoader load error:",err.message);
+                error("ResourcesLoader load error:", err.message);
             }
             doneFunc(dataAsset);
-        });            
+        });
     }
 
     /**
      * @description 创建界面一定使用此方法 resources需要动态加载的资源(使用此方法，引擎底层资源释放)
      */
-    static loadWithViewInfo(viewInfo:ViewInfoType, doneFunc:FileCallback<UnionAsset>, isShowLoading:boolean = true, type?:typeof Asset){
+    static loadWithViewInfo(viewInfo: ViewInfoType, doneFunc: FileCallback<UnionAsset>, isShowLoading: boolean = true, type?: typeof Asset) {
         let path = viewInfo.Path;
         if (isShowLoading) {
             netLoadingMgr.addMsgLoading("load view:" + path, 0)
         }
 
-        if ( type == undefined ) {
+        if (type == undefined) {
             resources.load(path, (err, dataAsset) => {
                 if (err) {
                     error("ResourcesLoader load error:", err.message);
                 }
 
                 // 添加自动释放
-                ResourcesLoader._autoReleaseRes(viewInfo,dataAsset);
+                ResourcesLoader._autoReleaseRes(viewInfo, dataAsset);
                 doneFunc(dataAsset);
 
                 //加载转圈
@@ -83,31 +83,21 @@ export class ResourcesLoader {
 
         resources.load(path, type, (err, dataAsset) => {
             if (err) {
-                error("ResourcesLoader load error:",err.message);
+                error("ResourcesLoader load error:", err.message);
             }
 
             // 添加自动释放
-            ResourcesLoader._autoReleaseRes(viewInfo,dataAsset);
+            ResourcesLoader._autoReleaseRes(viewInfo, dataAsset);
             doneFunc(dataAsset);
 
             //加载转圈
             netLoadingMgr.removeMsgLoading("load view:" + path)
-        });            
-    }
-    
-    static loadList(pathList:string[], onProcess:(finishNum:number, max:number, data)=>void,onComplete?:()=>void){
-        let finishNum:number = 0
-        let totalNum:number = pathList.length
-
-        pathList.forEach(element => {
-            this.load(element, (data)=>{
-                finishNum++
-                onProcess(finishNum, totalNum, data)
-                if (finishNum == totalNum) {
-                    onComplete? onComplete():undefined;
-                }
-            })
         });
+    }
+
+    static loadList(pathList: string[], onProcess: (finishNum: number, max: number) => void, onComplete: () => void, bundleName: string = "resources") {
+        var bundle = assetManager.getBundle(bundleName);
+        bundle.load(pathList,onProcess, onComplete)
     }
 
     //释放单个资源
@@ -116,18 +106,18 @@ export class ResourcesLoader {
         bundle?.release(path);
     }
 
-    static loadPromise<T extends Asset>(path: string, type?:typeof Asset): Promise<T>{
-        return new Promise<T>((resolve, rejected)=>{
-            this.load(path, (data:T)=>{
+    static loadPromise<T extends Asset>(path: string, type?: typeof Asset): Promise<T> {
+        return new Promise<T>((resolve, rejected) => {
+            this.load(path, (data: T) => {
                 resolve(data);
             }, type)
         })
     }
 
     //是否需要释放内存
-    static checkNeedToRelease():boolean {
+    static checkNeedToRelease(): boolean {
         //暂时用了1GB内存需要释放
-        let mb = 1024*1024;
+        let mb = 1024 * 1024;
         if (game._gfxDevice.memoryStatus.textureSize / (mb) > ResourcesLoader._CacheMaxMemory) {
             return true
         }
@@ -135,7 +125,7 @@ export class ResourcesLoader {
     }
 
     // 引用计数+1
-    static addResRef(layerName:string){
+    static addResRef(layerName: string) {
         let asset = ResourcesLoader._ResCounter.get(layerName);
         if (asset) {
             asset.addRef();
@@ -144,7 +134,7 @@ export class ResourcesLoader {
 
     // 引用计数-1
     //单纯减少引用，纹理统一释放
-    static decResRef(layerName:string){
+    static decResRef(layerName: string) {
         let asset = ResourcesLoader._ResCounter.get(layerName);
         if (asset) {
             asset.decRef();
@@ -153,24 +143,24 @@ export class ResourcesLoader {
     }
 
     //所有引用清除
-    static clearAllRef(){
+    static clearAllRef() {
         ResourcesLoader._ResCounter.forEach(element => {
             element.decRef(false)
         });
         ResourcesLoader._ResCounter.clear()
     }
 
-    static releaseUnusedAssets(){
+    static releaseUnusedAssets() {
         resources.releaseUnusedAssets()
     }
 
-    private static _autoReleaseRes(viewInfo:ViewInfoType,asset:Asset){
+    private static _autoReleaseRes(viewInfo: ViewInfoType, asset: Asset) {
         let cache = viewInfo.Cache;
         if (!cache) {
             if (!ResourcesLoader._ResCounter.get(viewInfo.View)) {
-                ResourcesLoader._ResCounter.set(viewInfo.View,asset);
+                ResourcesLoader._ResCounter.set(viewInfo.View, asset);
             }
-        }else{
+        } else {
             // 永久缓存 >1 即可
             asset.addRef();
         }
