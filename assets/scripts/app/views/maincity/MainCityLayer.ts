@@ -75,7 +75,6 @@ export class MainCityLayer extends LayerBase {
         this._deltaPos = event.getDelta()
         this._deltaPos.multiplyScalar(1.5)
         this._deltaPos = v2(this._deltaPos.x, 0)
-        log(this._deltaPos)
         this.mulitBgComp.move(this._deltaPos, false)
     }
     
