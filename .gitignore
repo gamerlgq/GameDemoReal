@@ -22,10 +22,3 @@ node_modules/
 # WebStorm
 #//////////////////////////
 .idea/
-#//////////////////////////
-# mac os
-#//////////////////////////
-.DS_Store
-assets/.DS_Store
-.creator/
-@types/
