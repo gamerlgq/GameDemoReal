@@ -2,6 +2,9 @@
 import { Asset, find, instantiate, log, Node, Prefab, resources, UIOpacity, UITransform, Widget, widgetManager } from "cc";
 import { ShowBackgroundMgr } from "../../app/define/ShowBackgroundMgr";
 import { viewRegisterMgr } from "../../app/define/ViewRegisterMgr";
+import { MainEventTrigger } from "../../app/views/common/MainEventTrigger";
+import { TouchEffect } from "../../app/views/common/TouchEffect";
+import { TouchMain } from "../../app/views/common/TouchMain";
 import { Singleton } from "../components/Singleton";
 import { ResourcesLoader } from "../data/ResourcesLoader";
 import { viewEventMgr } from "../listener/EventMgr";
@@ -26,6 +29,7 @@ class SceneMgr extends Singleton {
         this._layerMap = new Map();
         this._tableLayerStack = [];
         this.initAllScence();
+        this._initTouchGroup()
     }
 
     clear() {
@@ -58,6 +62,7 @@ class SceneMgr extends Singleton {
     private initAllScence() {
         this._layerMap.set("MainGroup", this.createNode("__MainGroup")); // 主界面层
         this._layerMap.set("TableGroup", this.createNode("__TableGroup")); // 页卡层
+        this._layerMap.set("MainEventTrigger", this.createNode("__MainEventTrigger")); // 全局事件触发层
         this._layerMap.set("TransitionGroup", this.createNode("__TransitionGroup")); // 过渡层
         this._layerMap.set("NewGuideGroup", this.createNode("__NewGuideGroup")); // 新手引导层
         this._layerMap.set("DialogGroup", this.createNode("__DialogGroup")); // 对话框层
@@ -68,10 +73,15 @@ class SceneMgr extends Singleton {
         this._layerMap.set("TouchGroup", this.createNode("__TouchGroup")); // 触摸反馈
     }
 
+    private _initTouchGroup() {
+        this._layerMap.get("TouchGroup").addComponent(TouchMain)
+    }
+
     private clearAllScence() {
         let layers = [
             "MainGroup",
             "TableGroup",
+            "MainEventTrigger",
             "TransitionGroup",
             "NewGuideGroup",
             "DialogGroup",
@@ -339,6 +349,9 @@ class SceneMgr extends Singleton {
         // }
     }
 
+    addMainEventTrigger() {
+        this._layerMap.get("MainEventTrigger").addComponent(MainEventTrigger)
+    }
     /**
      * @description: 替换页卡内容层
      * @param {type}
