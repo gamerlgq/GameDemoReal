@@ -41,7 +41,7 @@ export class HotUpdate extends Component {
     }
 
     onLoad() {
-        if (!jsb) {
+        if (!sys.isNative) {
             return;
         }
         this._storagePath = ((jsb.fileUtils ? jsb.fileUtils.getWritablePath() : '/') + 'hotupdate');
