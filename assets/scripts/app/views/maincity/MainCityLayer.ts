@@ -30,12 +30,12 @@ export class MainCityLayer extends LayerBase {
     // @property
     // serializableDummy = 0;
 
+    @property(MulitMoveingBgs)
+    mulitBgComp:MulitMoveingBgs
+
     @property(Node)
-    private bgNode:Node
-    _mulitBgComp:MulitMoveingBgs
+    mainCityLayer:Node
 
-
-    _bgmain:Node;
     _deltaPos:Vec2;
     _bgDInertiaMove:DInertiaMove
 
@@ -60,31 +60,30 @@ export class MainCityLayer extends LayerBase {
     }
 
     private _initBgTouch() {
-        this._mulitBgComp = this.bgNode.getComponent(MulitMoveingBgs)
-        
-        this._bgmain = find("bg/mainBg",this.node.parent)
-        this._bgmain.on(Node.EventType.TOUCH_START, this.onBgTouchStart.bind(this))
-        this._bgmain.on(Node.EventType.TOUCH_MOVE, this.onBgTouchMove.bind(this))
-        this._bgmain.on(Node.EventType.TOUCH_END, this.onBgTouchEnd.bind(this))
+        // this._bgmain = find("bg/mainBg",this.node.parent)
+        this.mainCityLayer.on(Node.EventType.TOUCH_START, this.onBgTouchStart.bind(this))
+        this.mainCityLayer.on(Node.EventType.TOUCH_MOVE, this.onBgTouchMove.bind(this))
+        this.mainCityLayer.on(Node.EventType.TOUCH_END, this.onBgTouchEnd.bind(this))
         // this._bgDInertiaMove = this._bgmain.addComponent(DInertiaMove)
     }
 
     private onBgTouchStart() {
-        this._mulitBgComp.stop()
+        this._deltaPos = null
     }
 
     private onBgTouchMove(event:EventTouch) {
         this._deltaPos = event.getDelta()
         this._deltaPos.multiplyScalar(1.5)
         this._deltaPos = v2(this._deltaPos.x, 0)
-        this._mulitBgComp.move(this._deltaPos, false)
+        log(this._deltaPos)
+        this.mulitBgComp.move(this._deltaPos, false)
     }
     
     private onBgTouchEnd() {
         if (!this._deltaPos) {
             return
         }
-        this._mulitBgComp.move(this._deltaPos.multiplyScalar(3), true)
+        this.mulitBgComp.move(this._deltaPos.multiplyScalar(3), true)
     }
 
     update (deltaTime: number) {

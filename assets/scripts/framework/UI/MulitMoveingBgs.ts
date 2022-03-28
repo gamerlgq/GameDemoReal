@@ -50,6 +50,8 @@ export class MulitMoveingBgs extends Component {
     }
 
     move(byPos: Vec2, isDInertia: boolean) {
+        this.stop()
+
         // 惯性移动
         if (isDInertia) {
             let dInertiaMoveComp = this.mainBg.getComponent(DInertiaMove)
