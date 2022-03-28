@@ -43,12 +43,16 @@ export class MainCityLayer extends LayerBase {
     onLoad(){
         //触发器写在onLoad，否则切换刚加入主场景的时候，start还没开始执行
         sceneTriggerMgr.addTriggrt(viewRegisterMgr.getViewInfo("maincity", "MainCityLayer").System, this.onTrigger.bind(this),1)
-    }
 
+    }
+    
     start () {
         // [3]
         audioMgr.playMusic("maincity/avs/bgm_liyuan")
         this._initBgTouch()
+
+        //全局事件监听
+        sceneMgr.addMainEventTrigger()
     }
 
     private onTrigger() {
