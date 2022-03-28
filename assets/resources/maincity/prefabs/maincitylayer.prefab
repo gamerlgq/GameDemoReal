@@ -720,7 +720,7 @@
     "bgNode": {
       "__id__": 15
     },
-    "moveScale": 0.3
+    "moveScale": 0.15
   },
   {
     "__type__": "cc.PrefabInfo",

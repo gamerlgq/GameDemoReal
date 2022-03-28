@@ -5,7 +5,7 @@
  * @LastEditTime: 2022-03-05 15:11:03
  * @Description: file content 
  */
-import { Node, UIOpacity, v3, Vec2 } from "cc"
+import { Node, UIOpacity, v2, v3, Vec2, Vec3 } from "cc"
 
 export function setNodeVisible(node: Node, isVisible: boolean) {
     // let opComp = node.addComponent(UIOpacity)
@@ -36,4 +36,8 @@ export function posAdd(node: Node, offPos: Vec2, minX?: number, maxX?: number, m
 
 export function v2ToV3(v2: Vec2) {
     return v3(v2.x, v2.y, 0)
+}
+
+export function v3ToV2(v3: Vec3) {
+    return v2(v3.x, v3.y)
 }
