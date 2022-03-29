@@ -1,6 +1,6 @@
 
 import { _decorator, Component, Node, CCInteger, Prefab, v3, tween, Vec3, Vec2, log, CCFloat } from 'cc';
-import { posAdd } from '../utils/functions';
+import { posAdd, v2ToV3, v3ToV2 } from '../utils/functions';
 import { DInertiaMove } from './DInertiaMove';
 const { ccclass, property } = _decorator;
 
@@ -37,30 +37,22 @@ export class MulitMoveingBgs extends Component {
     private maxX: number = 0;
 
     start() {
-        this.mainBg.addComponent(DInertiaMove).onStop = this.onMainBgStop.bind(this)
+        this.mainBg.addComponent(DInertiaMove).onPosChange = this.onMainBgChangePos.bind(this)
+    }
+
+    private onMainBgChangePos(insreasedPos:Vec3) {
         this.subBg.forEach(element => {
-            element.bgNode.addComponent(DInertiaMove)
+            let subMovePos = insreasedPos.clone().multiplyScalar(element.moveScale)
+            posAdd(element.bgNode, v3ToV2(subMovePos))
         });
     }
 
-    private onMainBgStop() {
-        this.subBg.forEach(element => {
-            element.bgNode.getComponent(DInertiaMove).stop()
-        });
-    }
 
     move(byPos: Vec2, isDInertia: boolean) {
-        this.stop()
-
         // 惯性移动
         if (isDInertia) {
             let dInertiaMoveComp = this.mainBg.getComponent(DInertiaMove)
             dInertiaMoveComp.move(byPos, this.minX, this.maxX)
-
-            // //子背景惯性移动
-            this.subBg.forEach(element => {
-                element.bgNode.getComponent(DInertiaMove).move(byPos.clone().multiplyScalar(element.moveScale))
-            });
         }
         else {
             // 非惯性移动
@@ -73,12 +65,11 @@ export class MulitMoveingBgs extends Component {
                 newPos.x = this.maxX
             }
 
-            let dis =  newPos.subtract(this.mainBg.position).length()
+            let insreasedPos = newPos.subtract(this.mainBg.position)
+            let dis =  insreasedPos.length()
             if (dis !=0 ) {
                 posAdd(this.mainBg, byPos, this.minX, this.maxX)
-                this.subBg.forEach(element => {
-                    posAdd(element.bgNode, byPos.multiplyScalar(element.moveScale))
-                });
+                this.onMainBgChangePos(insreasedPos)
             }
 
         }

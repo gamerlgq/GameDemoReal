@@ -60,22 +60,20 @@ export class MainCityLayer extends LayerBase {
     }
 
     private _initBgTouch() {
-        // this._bgmain = find("bg/mainBg",this.node.parent)
         this.mainCityLayer.on(Node.EventType.TOUCH_START, this.onBgTouchStart.bind(this))
         this.mainCityLayer.on(Node.EventType.TOUCH_MOVE, this.onBgTouchMove.bind(this))
         this.mainCityLayer.on(Node.EventType.TOUCH_END, this.onBgTouchEnd.bind(this))
-        // this._bgDInertiaMove = this._bgmain.addComponent(DInertiaMove)
     }
 
     private onBgTouchStart() {
         this._deltaPos = null
+        this.mulitBgComp.stop()
     }
 
     private onBgTouchMove(event:EventTouch) {
         this._deltaPos = event.getDelta()
         this._deltaPos.multiplyScalar(1.5)
         this._deltaPos = v2(this._deltaPos.x, 0)
-        log(this._deltaPos)
         this.mulitBgComp.move(this._deltaPos, false)
     }
     
@@ -83,7 +81,7 @@ export class MainCityLayer extends LayerBase {
         if (!this._deltaPos) {
             return
         }
-        this.mulitBgComp.move(this._deltaPos.multiplyScalar(3), true)
+        this.mulitBgComp.move(this._deltaPos, true)
     }
 
     update (deltaTime: number) {

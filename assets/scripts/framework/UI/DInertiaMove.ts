@@ -32,6 +32,10 @@ export class DInertiaMove extends Component {
         this._onStop = value;
     }
 
+    private _increasedPos: Vec3; //每一帧增加的向量
+
+    public onPosChange:Function;
+
     start() {
     }
     
@@ -61,11 +65,13 @@ export class DInertiaMove extends Component {
                 newPos.x = this._maxX
             }
 
-            let dis =  newPos.subtract(this.node.position).length()
+            this._increasedPos = newPos.subtract(this.node.position)
+            let dis =  this._increasedPos.length()
             if (dis < 2)
                 this.stop()
             else{
                 posAdd(this.node, this._autoOffPos, this._minX, this._maxX)
+                this.onPosChange && this.onPosChange(this._increasedPos)
             }
         }
     }
