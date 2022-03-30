@@ -1,4 +1,4 @@
-import { Asset, assetManager, AssetManager, error, game, log, resources } from "cc";
+import { Asset, assetManager, AssetManager, error, game, log, resources, __private } from "cc";
 import { ViewInfoType } from "../../app/define/ConfigType";
 import { sceneMgr } from "../core/SceneMgr";
 import { netLoadingMgr } from "../net/NetLoadingMgr";
@@ -14,7 +14,7 @@ import { netLoadingMgr } from "../net/NetLoadingMgr";
 type UnionAsset = Asset | AssetManager.RequestItem[]
 
 type FileCallback<T extends UnionAsset> = {
-    (data: T): void
+    (data: T, err?): void
 }
 
 export class ResourcesLoader {
@@ -43,7 +43,7 @@ export class ResourcesLoader {
                 if (err) {
                     error("ResourcesLoader load error:", err.message);
                 }
-                doneFunc(dataAsset);
+                doneFunc(dataAsset, err);
             });
             return;
         }
@@ -52,8 +52,13 @@ export class ResourcesLoader {
             if (err) {
                 error("ResourcesLoader load error:", err.message);
             }
-            doneFunc(dataAsset);
+            doneFunc(dataAsset, err);
         });
+    }
+
+    static get<T extends Asset>(path: string, type?: __private._cocos_core_asset_manager_shared__AssetType<T> | null, bundleName: string = "resources"): T | null {
+        var bundle: AssetManager.Bundle | null = assetManager.getBundle(bundleName);
+        return bundle!.get(path, type);
     }
 
     /**
