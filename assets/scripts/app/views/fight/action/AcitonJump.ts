@@ -46,7 +46,9 @@ export class AcitonJump extends ActionBase {
             tween().to(duration,{
                 scale:_scale
             })
-        )
+        ).call(()=>{
+            this.done();
+        })
     }
 
     private _getTargetPos(tar:HeroSpineNode|MonsterSpineNode):Vec3 {

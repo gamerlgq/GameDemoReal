@@ -15,7 +15,6 @@ export class EffectBase extends Component {
         }
     }
 
-
     /**
      * 
      * @param callback 设置回调
