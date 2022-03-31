@@ -6,6 +6,8 @@
  * @Description: file content 
  */
 import { Node, UIOpacity, v2, v3, Vec2, Vec3 } from "cc"
+import { RedPoint } from "../../app/views/common/RedPoint"
+import Logger from "./Logger"
 
 export function setNodeVisible(node: Node, isVisible: boolean) {
     // let opComp = node.addComponent(UIOpacity)
@@ -32,6 +34,20 @@ export function posAdd(node: Node, offPos: Vec2, minX?: number, maxX?: number, m
     }
 
     node.position = v3(x || node.position.x, y || node.position.y)
+}
+
+/**
+ * 递归找到node节点的红点节点，并显示/隐藏
+ * @param node 
+ * @param isShow 
+ */
+export function showRedPoint(node: Node, isShow: boolean) {
+    let comp = node.getComponentInChildren(RedPoint)
+    if (!comp) {
+        Logger.e("找不到红点节点")
+        return
+    } 
+    comp.node.active = isShow
 }
 
 export function v2ToV3(v2: Vec2) {
