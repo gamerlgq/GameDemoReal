@@ -22,7 +22,8 @@ export class DataRegisterMgr extends Singleton{
         Translate:["Translate","translate/data/translate",[]],
         FightSkill:["FightSkill","fight/datas/skill/skill_",[1,1]],
         FightHit:["FightHit","fight/datas/hit/hit_",[1,1]],
-        FightEmbattled:["FightEmbattled","fight/datas/embattled/embattled_",[1,1]]
+        FightEmbattled:["FightEmbattled","fight/datas/embattled/embattled_",[1,1]],
+        MaincityPreload:["MaincityPreload","maincity/datas/preload",[]]
     }
 
     loadAllData(doneFunc: () => void) {

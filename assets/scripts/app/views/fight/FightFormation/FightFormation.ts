@@ -3,21 +3,8 @@ import { _decorator, Component, Node, Prefab, instantiate, find, EventTouch, Twe
 import { sceneMgr } from '../../../../framework/core/SceneMgr';
 import { LayerBase } from '../../../../framework/ui/LayerBase';
 import { ViewProtocol } from '../../../define/ViewProtocol';
-import { viewRegisterMgr } from '../../../define/ViewRegisterMgr';
 import { GeneralIconShowComp } from './GeneralIconShowComp';
 const { ccclass, property } = _decorator;
-
-/**
- * Predefined variables
- * Name = formation
- * DateTime = Thu Mar 10 2022 14:11:00 GMT+0800 (中国标准时间)
- * Author = maikx123456
- * FileBasename = formation.ts
- * FileBasenameNoExtension = formation
- * URL = db://assets/scripts/app/views/formation/formation.ts
- * ManualUrl = https://docs.cocos.com/creator/3.4/manual/zh/
- *
- */
 
 class PosInfo
 {
@@ -92,7 +79,7 @@ export class FightFormation extends LayerBase {
             //寻找上阵位置
 
             let upPos:PosInfo
-            for (const iterator of this._posList) {
+        for (const iterator of this._posList) {
                 if (!iterator.orgGeneralIcon) {
                     upPos = iterator
                     break;
@@ -132,21 +119,6 @@ export class FightFormation extends LayerBase {
         sceneMgr.sendCreateView(ViewProtocol.TransLoadingLayer,[()=>{
             sceneMgr.popTableLayer();
             sceneMgr.sendCreateView(ViewProtocol.FightMainLayer);
-        },()=>{},viewRegisterMgr.getFightPreloadRes()]);
+        },()=>{}]);
     }
-
-    // update (deltaTime: number) {
-    //     // [4]
-    // }
 }
-
-/**
- * [1] Class member could be defined like this.
- * [2] Use `property` decorator if your want the member to be serializable.
- * [3] Your initialization goes here.
- * [4] Your update function goes here.
- *
- * Learn more about scripting: https://docs.cocos.com/creator/3.4/manual/zh/scripting/
- * Learn more about CCClass: https://docs.cocos.com/creator/3.4/manual/zh/scripting/decorator.html
- * Learn more about life-cycle callbacks: https://docs.cocos.com/creator/3.4/manual/zh/scripting/life-cycle-callbacks.html
- */

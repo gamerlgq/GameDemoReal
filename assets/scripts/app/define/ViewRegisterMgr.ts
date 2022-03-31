@@ -19,12 +19,14 @@ import { yy } from "./YYNamespace";
 import { ViewInfoType } from "./ConfigType";
 import { LoadingCreator } from "../views/loading/Creator";
 import ChatCreator from "../views/chat/Creator";
+import { log } from "cc";
+import { G } from "../common/GlobalFunction";
 
 type ViewConfig = {
     path: string;//预制体路径
     isShowBg?: boolean;//是否显示背景(默认false不现实背景)
     isCache?: boolean;//是否永久缓存(默认false不永久缓存) 手动管理是否释放
-    batch?: Array<number>;//批量[start,end](hero_个);
+    batch?:Array<number>;//批量资源例如 hero_1 ~ helr_xx [1,xx];
 }
 
 interface ViewRegMgrInterface {
@@ -44,11 +46,11 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
         commonUI:1,
         dialog:1,
         maincity:1,
-        loading:1
+        loading:1,
+        fight:1,
+        formation:1,
+        hero:1
     }
-
-    // 战斗预加载的预制体
-    static FightPreloadResList = ["formation","fight","hero"]
 
     // 注册预页面预制体路径
     ViewType = {
@@ -153,15 +155,16 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
                 },
                 "FightFormation": {
                     path: "fight/prefabs/changjing/FightFormation"
-                },
+                }
             }
         },
+
         // 武将
         hero: {
             prefab: {
                 "HeroSpinePrefab": {
-                    path: "hero/prefabs/hero/",
-                    
+                    path: "hero/prefabs/hero/hero_",
+                    batch:[1,3]
                 }
             }
         },
@@ -169,8 +172,7 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
         formation: {
             prefab: {
                 "FormationView": {
-                    path: "formation/prefabs/formation",
-                    batch:[1,3]
+                    path: "formation/prefabs/formation"
                 }
             }
         },
@@ -226,42 +228,18 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
         })
     }
 
-    getPreloadPrefabs():Array<string>{
-        let list:Array<string> = new Array<string>();
-        Object.keys(this.ViewType).forEach((system:string)=>{
-            if (ViewRegisterMgr.PreloadResList[system]) {
-                let module = this.ViewType[system];
-                Object.keys(module.prefab).forEach((view:string)=>{
-                    let viewConfig = <ViewConfig>module.prefab[<string><unknown>view];
-                    list.push(viewConfig.path);
-                })
-            }
-        })
+    // 在编辑器中右键添加resources下的预加载资源,自动保存到maincity/datas/preload.json文件中
+    getMaincityPreloadList():Array<string>{
+        let list:Array<string> = new Array();
+        let config = G.getConfig("MaincityPreload");
+        if (config){
+            const keys = Object.keys(config);
+            keys.forEach(key=>{
+                let pair:Array<string>=new Array();
+                list.push(key);
+            })
+        }
         return list;
-    }
-
-    getFightPreloadRes():Array<string>{
-        return ViewRegisterMgr.FightPreloadResList;
-        // let list:Array<string> = new Array<string>();
-        // Object.keys(this.ViewType).forEach((system:string)=>{
-        //     if (ViewRegisterMgr.FightPreloadResList[system]) {
-        //         let module = this.ViewType[system];
-        //         Object.keys(module.prefab).forEach((view:string)=>{
-        //             let viewConfig = <ViewConfig>module.prefab[<string><unknown>view];
-        //             if (viewConfig.batch) {
-        //                 if (system == "hero"){
-        //                     for (let index = viewConfig.batch[0]; index <= viewConfig.batch[1]; index++) {
-        //                         let path = viewConfig.path + "hero_" + index;
-        //                         list.push(path);        
-        //                     }
-        //                 }
-        //             }else{
-        //                 list.push(viewConfig.path);
-        //             }
-        //         })
-        //     }
-        // })
-        // return list;
     }
 
 

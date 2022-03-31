@@ -91,7 +91,7 @@ class AudioManager extends Node {
     popMusic(){
         this._musicQueue.pop();
         const lastIndex = this._musicQueue.length -1 
-        const url = this._musicQueue.at(lastIndex);
+        const url = this._musicQueue[lastIndex];
         if (url){
             this._playMusic(url);
         }

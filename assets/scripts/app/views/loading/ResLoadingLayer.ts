@@ -25,10 +25,15 @@ export class ResLoadingLayer extends Component {
     }
 
     private _getLoadingList() {
-        this._loadingResList = viewRegisterMgr.getPreloadPrefabs();
+        this._loadingResList = viewRegisterMgr.getMaincityPreloadList();
     }
     
     private _startPreload() {
+        log(this._loadingResList,"this._loadingResList");
+        if (!this._loadingResList || this._loadingResList.length == 0){
+            return this._goGameView();
+        }
+
         ResourcesLoader.loadList(this._loadingResList,(finishNum:number,maxNum:number)=>{
             let oldVal = this.bar.progress;
             let newVal = finishNum / maxNum;

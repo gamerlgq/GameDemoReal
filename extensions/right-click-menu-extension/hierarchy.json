@@ -1,1 +1,1 @@
-[{"id":1647326616069,"label":"自定义创建","file":"","order":"1","root":false,"submenu":[{"id":1647326656260,"label":"ScriptNode","file":"/dist/src/CustomCreate/Scenes/CreateScriptNode.js","order":-1,"root":true,"submenu":[]}]}]
+[{"id":1647326616069,"label":"自定义:创建","file":"","order":"1","root":false,"submenu":[{"id":1647326656260,"label":"ScriptNode","file":"/dist/src/CustomCreate/Scenes/CreateScriptNode.js","order":-1,"root":true,"submenu":[]}]}]

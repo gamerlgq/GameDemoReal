@@ -28,9 +28,12 @@ export class TransLoadingLayer extends LayerBase {
 
     start () {
         log(this._loadingResList,"this._loadingResList");
-        if (!this._loadingResList){
+        if (!this._loadingResList || this._loadingResList.length == 0){
+            log("121121212")
             return this._playTransAnimation();
         }
+
+        log(this._loadingResList && this._loadingResList.length > 0)
 
         this._loadingRes();
     }
@@ -41,18 +44,55 @@ export class TransLoadingLayer extends LayerBase {
     }
 
     private _loadingRes() {
+        // ResourcesLoader.loadList(this._loadingResList,(finishNum:number,max:number)=>{
+        //     let oldVal = this.bar.progress;
+        //     let newVal = finishNum / max;
+        //     if (newVal < oldVal) {
+        //         newVal = oldVal;
+        //     }
+        //     log(newVal,oldVal);
+        //     this.bar.progress = newVal;
+        //     this.percent.string = Math.floor(newVal * 100) + "%";
+        // },()=>{
+        //     this._playTransAnimation();
+        // })
+
         this.bar.progress = 0;
         [this._curProgress,this._maxProgress] = [0,0];
-        let path = this._loadingResList.shift();
-        let cb = ()=>{
-            path = this._loadingResList.shift();
-            if (path) {
-                this._loadRes(path,cb);
-            }else{
-                this._playTransAnimation();
-            }
+        let curIndex = 0;
+        for (let index = 0; index < this._loadingResList.length; index++) {
+            const url = this._loadingResList[index];
+            ResourcesLoader.loadDir(url,(finishNum: number, max: number)=>{
+                // let oldVal = this.bar.progress;
+                let newVal = finishNum / max;
+                // if (newVal < oldVal) {
+                    // newVal = oldVal;
+                // }
+                // this._curProgress+=finishNum;
+                // if (index == curIndex){
+                //     this._maxProgress+=this._maxProgress;
+                //     curIndex+=1;
+                // }
+                
+                log(finishNum,max);
+                this.bar.progress = newVal;
+                this.percent.string = Math.floor(newVal * 100) + "%";
+            },()=>{
+                
+            })
         }
-        this._loadRes(path,cb);    
+
+
+        // let path = this._loadingResList.shift();
+        // let cb = ()=>{
+        //     path = this._loadingResList.shift();
+        //     if (path) {
+        //         this._loadRes(path,cb);
+        //     }else{
+        //         this._playTransAnimation();
+        //     }
+        // }
+        // this._loadRes(path,cb);    
     }
 
     private _loadRes(path:string, onComplete?:() => void){

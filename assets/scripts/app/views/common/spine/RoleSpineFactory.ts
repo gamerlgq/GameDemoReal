@@ -34,7 +34,7 @@ export class RoleSpineFactory {
 
     private static async _loadPromise(id:number):Promise<Node>{
         let info = viewRegisterMgr.getViewInfo("hero","HeroSpinePrefab");
-        let file = info.Path + "hero_" + id.toString();
+        let file = info.Path + id.toString();
         let prefab:Prefab = await ResourcesLoader.loadPromise(file,Prefab);
         let spineNode = instantiate(prefab);
         return spineNode;
