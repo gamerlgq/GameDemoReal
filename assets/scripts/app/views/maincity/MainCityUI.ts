@@ -21,6 +21,7 @@ export class MainCityUI extends ComponentBase {
 
     start(){
         this.roleName.setString("麦坤雄");
+
     }
 
     // update (deltaTime: number) {

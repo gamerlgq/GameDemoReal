@@ -25,7 +25,7 @@ export class AttackActionMgr extends Singleton{
                 
                 break;
             case FightConstant.FightAttackAction.Action_Skill://技能攻击
-            this._parseSkill(data)
+                this._parseSkill(data)
                 break;
             case FightConstant.FightAttackAction.Action_Buff://直接伤害(一些dot，每回合的伤害/每回合治疗等)
 

@@ -1,18 +1,75 @@
 
-import { _decorator } from 'cc';
+import { Animation, Label, log, ProgressBar, _decorator } from 'cc';
 import { runInThisContext } from 'vm';
 import { sceneMgr } from '../../../framework/core/SceneMgr';
+import { ResourcesLoader } from '../../../framework/data/ResourcesLoader';
 import { LayerBase } from '../../../framework/ui/LayerBase';
 const { ccclass, property } = _decorator;
  
 @ccclass('TransLoadingLayer')
 export class TransLoadingLayer extends LayerBase {
     
+    @property(Label)
+    percent: Label = null;
+
+    @property(ProgressBar)
+    bar: ProgressBar = null;
+
     private _enterCallback:Function = null
     private _completeCallback:Function = null
+    private _loadingResList:Array<string> = null;
+    private _curProgress:number = null;
+    private _maxProgress:number = null;
+
+    // 自定义加载列表,如果为空则播放动画后显示场景
+    public setResLoadingList(list:Array<string>){
+        this._loadingResList = list;
+    }
 
     start () {
-      
+        log(this._loadingResList,"this._loadingResList");
+        if (!this._loadingResList){
+            return this._playTransAnimation();
+        }
+
+        this._loadingRes();
+    }
+
+    private _playTransAnimation(){
+        let ani = this.node.getComponent(Animation);
+        ani.play();
+    }
+
+    private _loadingRes() {
+        this.bar.progress = 0;
+        [this._curProgress,this._maxProgress] = [0,0];
+        let path = this._loadingResList.shift();
+        let cb = ()=>{
+            path = this._loadingResList.shift();
+            if (path) {
+                this._loadRes(path,cb);
+            }else{
+                this._playTransAnimation();
+            }
+        }
+        this._loadRes(path,cb);    
+    }
+
+    private _loadRes(path:string, onComplete?:() => void){
+        ResourcesLoader.loadDir(path,(finishNum: number, max: number)=>{
+            let oldVal = this.bar.progress;
+            let newVal = finishNum / max;
+            if (newVal < oldVal) {
+                newVal = oldVal;
+            }
+            log(newVal,oldVal);
+            this.bar.progress = newVal;
+            this.percent.string = Math.floor(newVal * 100) + "%";
+        },()=>{
+            if (onComplete){
+                onComplete();
+            }
+        })
     }
 
     setEnterCalback(cb:Function){

@@ -7,6 +7,7 @@
  */
 
 import { _decorator, Prefab, instantiate, Node, js, sys, JsonAsset, log, director, TweenSystem, AnimationManager } from 'cc';
+import { audioMgr } from '../../../framework/core/audio/AudioManager';
 import { ResourcesLoader } from '../../../framework/data/ResourcesLoader';
 import { Message } from '../../../framework/listener/Message';
 import { LayerBase } from '../../../framework/ui/LayerBase';
@@ -48,6 +49,7 @@ export class FightMainLayer extends LayerBase {
         this._initBg();
         this._loadMainWorld();
         this._loadMainUI();
+        this._playBgMusic();
         this._addListeners();
     }
 
@@ -86,6 +88,10 @@ export class FightMainLayer extends LayerBase {
         })
     }
 
+    private _playBgMusic() {
+        audioMgr.playMusic("fight/avs/zhengzhan_bjyy");
+    }
+
     private _addListeners() {
         fightEventMgr.addEventListener(FightConstant.FightEvent.Game_Star,this._startGame.bind(this));
         this.addMsgListener(Protocol.Inner.SetAnimationSpeed,this._setSpeed.bind(this));
@@ -113,12 +119,13 @@ export class FightMainLayer extends LayerBase {
     }
 
     onDestroy(){
-        fightDataMgr.destory();
-        fightEventMgr.destory();
         fightController.destory();
+        fightDataMgr.destory();
         fightPlayer.destory();
         fightActionMgr.destory();
         fightBloodMgr.destory();
+        fightEventMgr.destory();
+        audioMgr.popMusic();
     }
 
     private _setSpeed(event:Message) {

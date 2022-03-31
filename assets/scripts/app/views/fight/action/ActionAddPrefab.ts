@@ -13,8 +13,8 @@ export class ActionAddPrefab extends ActionBase {
     
     /**
      * 
-     * @param own 移动节点
-     * @param duration 持续时间
+     * @param data FightActionData
+     * @returns Tween<Node>
      */
     public add(data:FightActionData):Tween<Node>{
         let animCfg = data.animCfg;
@@ -39,11 +39,11 @@ export class ActionAddPrefab extends ActionBase {
                     Data: data
                 }
                 com = node.getComponent(BloodEffect) as BloodEffect;
-                fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Blood_Change,args))
+                fightEventMgr?.send(new FightEvent(FightConstant.FightEvent.Blood_Change,args))
                 break;
             case "ROLE":
                 com = node.getComponent(EffectBase) as EffectBase;
-                tar.addEffectFont(node);
+                tar.addEffectFront(node);
                 break;
         }
 

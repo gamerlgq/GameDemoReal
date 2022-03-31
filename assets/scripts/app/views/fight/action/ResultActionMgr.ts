@@ -8,22 +8,42 @@ import { FightConstant } from "../FightConstant";
 import { FightActionData, fightActionMgr } from "./FightActionMgr";
 
 
+interface ResultRecord {
+    resultNum:number//第几个结果
+    targetNum:number//第几个目标
+}
+
 export let resultActionMgr:ResultActionMgr = null;
 /**
  * @description 攻击行动管理器 
  * */
 export class ResultActionMgr extends Singleton{
+
+    // 记录解析了第几个结果，第几个对象，用于判断result结束
+    private _parseResultDataRecord:ResultRecord = null;
+
     public static init(){
         resultActionMgr = ResultActionMgr.getInstance<ResultActionMgr>();
+        resultActionMgr._init();
+    }
+
+    private _init(){
+        this._parseResultDataRecord = {
+            resultNum:0,
+            targetNum:0
+        };
     }
 
     public parse(data:FightEventDataType.Attack_Start){
         
         let resultDatas = data.Result;
-        resultDatas.forEach(resultData => {
+
+        for (let index = 0; index < resultDatas.length; index++) {
+            this._parseResultDataRecord.resultNum = index + 1;
+            const resultData = resultDatas[index];
             let animationConfig = this._getAnimationConfig(data,resultData);
             this._parseResultAction(data,animationConfig,resultData);
-        });
+        };
     }
 
     private _getAnimationConfig(data:FightEventDataType.Attack_Start,resultData:any) {
@@ -90,6 +110,7 @@ export class ResultActionMgr extends Singleton{
 
         for (let index = 0; index < tarUnits.length; index++) {
             const tarUnit = tarUnits[index];
+            this._parseResultDataRecord.targetNum = index + 1;
             skillTimeline.forEach(animations => {
                 let oneTimeTween = tween();
                 animations.forEach(anim => {
@@ -151,19 +172,37 @@ export class ResultActionMgr extends Singleton{
             if (allTimeLine.length > 1){
                 let parallel = tween(tarUnit).parallel(...allTimeLine);
                 parallel.then(tween().call(()=>{
-                    log("result action finished!2")
-                    // 攻击结束
-                    fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Result_End,data));
+                    // 结果结束
+                    this._endCallback(data);
                 })).start();
             }else{
                 let t = allTimeLine[0];
                 t.target(tarUnit).then(tween().call(()=>{
-                    log("result action finished!1")
-                    // 结果结束
-                    fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Result_End,data));
+                    this._endCallback(data);
                 })).start();
             }
         }
+    }
+
+    private _endCallback(data:FightEventDataType.Attack_Start) {
+        if (this._checkIsEnd(data)){
+            log("result action finished!")
+            // 结果结束
+            fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Result_End,data));
+        }
+    }
+
+    private _checkIsEnd(data:FightEventDataType.Attack_Start):boolean {
+        let resultData = data?.Result;
+        // 最后一个结果
+        if (this._parseResultDataRecord.resultNum == resultData?.length){
+            let targetInfo = resultData[resultData.length-1];
+            let targets = targetInfo[2]?.length;
+            if (this._parseResultDataRecord.targetNum == targets){
+                return true;
+            }
+        }
+        return false
     }
 
     public destory(){

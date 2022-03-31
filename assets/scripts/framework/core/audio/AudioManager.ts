@@ -20,6 +20,8 @@ class AudioManager extends Node {
     private _uuid: string = "10000";                // 玩家唯一标识，一般为玩家数据库唯一编号
     private _localStorageTag: string = "";          // 本地存储标签名
 
+    private _musicQueue:Array<string> = null;
+
     public static getInstance(): AudioManager {
         if (!AudioManager._instance ) {
             AudioManager._instance = new AudioManager();
@@ -63,6 +65,8 @@ class AudioManager extends Node {
             this.music.volume = this._volume_music;
             this.effect.volume = this._volume_effect;
         }
+
+        this._musicQueue = new Array();
     }
 
     /** 设置玩家唯一标识 */
@@ -76,7 +80,24 @@ class AudioManager extends Node {
      * @param url        资源地址
      * @param callback   音乐播放完成事件
      */
-    playMusic(url: string, callback: Function | null = null) {
+    playMusic(url: string, callback?: Function) {
+        this._musicQueue.push(url);
+        this._playMusic(url,callback);
+    }
+
+    /**
+     * 推出场景需要在onDestory pop一下
+     */
+    popMusic(){
+        this._musicQueue.pop();
+        const lastIndex = this._musicQueue.length -1 
+        const url = this._musicQueue.at(lastIndex);
+        if (url){
+            this._playMusic(url);
+        }
+    }
+
+    private _playMusic(url: string, callback?: Function){
         if (this._switch_music) {
             this.music.load(url);
             this.music.onComplete = callback;

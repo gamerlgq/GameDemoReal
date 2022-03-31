@@ -100,6 +100,11 @@ export class ResourcesLoader {
         bundle.load(pathList,onProcess, onComplete)
     }
 
+    static loadDir(path: string,onProcess: (finishNum: number, max: number) => void, onComplete: () => void, bundleName: string = "resources"){
+        var bundle = assetManager.getBundle(bundleName);
+        bundle.loadDir(path,onProcess, onComplete)
+    }
+
     //释放单个资源
     static release(path: string, bundleName: string = "resources") {
         var bundle = assetManager.getBundle(bundleName);

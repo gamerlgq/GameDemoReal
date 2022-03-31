@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, ProgressBar, Label } from 'cc';
+import { _decorator, Component, Node, ProgressBar, Label, log } from 'cc';
 import { sceneMgr } from '../../../framework/core/SceneMgr';
 import { ResourcesLoader } from '../../../framework/data/ResourcesLoader';
 import { ViewProtocol } from '../../define/ViewProtocol';

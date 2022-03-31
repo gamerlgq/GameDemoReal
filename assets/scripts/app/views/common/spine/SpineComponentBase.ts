@@ -182,15 +182,15 @@ export class SpineComponentBase extends ComponentBase {
         this._animiateEventCallback = callback;
     }
 
-    public addEffectFont(node:Node,offset?:Vec3){
-        this.effectFontNode.addChild(node);
+    public addEffectFront(node:Node,offset?:Vec3){
+        this.effectFontNode?.addChild(node);
         if (offset) {
             node.position = offset;
         }
     }
 
     public addEffectBack(node:Node,offset?:Vec3){
-        this.effectBackNode.addChild(node);
+        this.effectBackNode?.addChild(node);
         if (offset) {
             node.position = offset;
         }

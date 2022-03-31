@@ -6,7 +6,7 @@
  * @Description: file content
  */
 
-import { _decorator, Node, EventTouch, AnimationComponent, Button, Label, CCFloat, js, Sprite, } from 'cc';
+import { _decorator, Node, EventTouch, AnimationComponent, Button, Label, CCFloat, js, Sprite, log, } from 'cc';
 import { sceneMgr } from '../../../framework/core/SceneMgr';
 import { socketMgr } from '../../../framework/net/SocketMgr';
 import { ComponentBase } from '../../../framework/ui/ComponentBase';

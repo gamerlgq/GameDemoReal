@@ -3,6 +3,7 @@ import { _decorator, Component, Node, Prefab, instantiate, find, EventTouch, Twe
 import { sceneMgr } from '../../../../framework/core/SceneMgr';
 import { LayerBase } from '../../../../framework/ui/LayerBase';
 import { ViewProtocol } from '../../../define/ViewProtocol';
+import { viewRegisterMgr } from '../../../define/ViewRegisterMgr';
 import { GeneralIconShowComp } from './GeneralIconShowComp';
 const { ccclass, property } = _decorator;
 
@@ -131,9 +132,8 @@ export class FightFormation extends LayerBase {
         sceneMgr.sendCreateView(ViewProtocol.TransLoadingLayer,[()=>{
             sceneMgr.popTableLayer();
             sceneMgr.sendCreateView(ViewProtocol.FightMainLayer);
-        }]);
+        },()=>{},viewRegisterMgr.getFightPreloadRes()]);
     }
-
 
     // update (deltaTime: number) {
     //     // [4]

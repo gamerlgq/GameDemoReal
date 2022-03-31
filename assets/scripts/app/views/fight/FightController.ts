@@ -5,8 +5,10 @@
  * @LastEditTime: 2022-03-20 22:57:06
  * @Description: file content
  */
-import { log } from "cc";
+import { Animation, AnimationClip, find, log } from "cc";
 import { Singleton } from "../../../framework/components/Singleton";
+import { gameMgr } from "../../../framework/core/GameMgr";
+import { CameraLock } from "../../common/animation/CameraLock";
 import { FightData } from "./data/FightData";
 import { fightDataMgr } from "./data/FightDataMgr";
 import { FightEvent } from "./event/FightEvent";
@@ -62,7 +64,19 @@ export class FightController extends Singleton{
 
     // 游戏开始
     private _onGameStart(){
-        this._roundStart();
+        this._playCameraAnimation();
+    }
+
+    private _playCameraAnimation() {
+        let fightCamera = gameMgr.getCamera("MainCamera");
+        let animation = fightCamera?.node?.getComponent(Animation);
+        let scriptCom = fightCamera?.node?.getComponent(CameraLock);
+        scriptCom?.setEndCallback(this._cameraAniEndCallback.bind(this));
+        animation.play("CameraLock");
+    }
+
+    private _cameraAniEndCallback() {
+        this._roundStart();   
     }
 
     // 每回合小行动结束
@@ -74,7 +88,7 @@ export class FightController extends Singleton{
     // 重播
     private _onReplay(){
         this._initData();
-        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Game_Star,null));
+        fightEventMgr?.send(new FightEvent(FightConstant.FightEvent.Game_Star,null));
     }
 
     // 暂停
@@ -103,7 +117,7 @@ export class FightController extends Singleton{
         let data:FightEventDataType.Round_Start = {
             Round: this._round
         }
-        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Round_Start,data));
+        fightEventMgr?.send(new FightEvent(FightConstant.FightEvent.Round_Start,data));
         this._actionStart()
     }
 
@@ -121,7 +135,7 @@ export class FightController extends Singleton{
             Action: this._action,
             ActionData: action
         }
-        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Action_Star,data));
+        fightEventMgr?.send(new FightEvent(FightConstant.FightEvent.Action_Star,data));
     }
 
     // 是否大回合结束
@@ -142,7 +156,7 @@ export class FightController extends Singleton{
 
     // 战斗结束
     private _gameEnd() {
-        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Game_End,null));
+        fightEventMgr?.send(new FightEvent(FightConstant.FightEvent.Game_End,null));
     }
 
     public destory(){

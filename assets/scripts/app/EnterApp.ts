@@ -1,4 +1,4 @@
-import { director, game, input, log, sys } from "cc";
+import { Camera, director, find, game, input, log, sys } from "cc";
 import { singletonMgr } from "../framework/components/SingletonMgr";
 import { audioMgr } from "../framework/core/audio/AudioManager";
 import { gameMgr } from "../framework/core/GameMgr";
@@ -48,6 +48,12 @@ export class EnterApp {
         netLoadingMgr.init()
         //玩家ID，保存音效设置
         // audioMgr.setUuid("3998857")
+
+        let uiCamera = find("Canvas")?.getChildByName("UICamera")?.getComponent(Camera);
+        gameMgr.setCamera("UICamera",uiCamera);
+
+        let fightCamera = find("Canvas")?.getChildByName("MainCamera")?.getComponent(Camera);
+        gameMgr.setCamera("MainCamera",fightCamera);
     }
 
     loadDefine() {

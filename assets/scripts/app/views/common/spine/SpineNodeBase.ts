@@ -65,8 +65,8 @@ export class SpineNodeBase extends Node {
     /**
      * @description 添加特效在角色身上
      */
-    public addEffectFont(node:Node,offset?:Vec3) {
-        this._spineCom.addEffectFont(node,offset);
+    public addEffectFront(node:Node,offset?:Vec3) {
+        this._spineCom.addEffectFront(node,offset);
     }
 
     /**

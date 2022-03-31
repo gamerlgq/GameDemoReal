@@ -62,9 +62,9 @@ export class FightActionMgr extends Singleton{
         this._parseAttack(data);
     }
 
-    // 做些清理工作;
+    
     private _onAttackEnd(event:FightEvent) {
-        this._tempActionList.length = 0;
+        
     }
 
     private _onResultStart(event:FightEvent) {
@@ -73,6 +73,8 @@ export class FightActionMgr extends Singleton{
     }
 
     private _onResultEnd(event:FightEvent) {
+        // 做些清理工作;
+        this._tempActionList.length = 0;
         fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Action_End,null));
     }
 

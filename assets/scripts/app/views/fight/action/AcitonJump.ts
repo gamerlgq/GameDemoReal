@@ -8,13 +8,15 @@ export class AcitonJump extends ActionBase {
     
     /**
      * 
-     * @param own 移动节点
-     * @param tar 目标节点
-     * @param duration 持续时间
+     * @param data FightActionData
+     * @param callback 可选,回调函数
+     * @returns Tween<Node>
      */
-    public jump(data:FightActionData):Tween<Node> {
+    public jump(data:FightActionData,callback?:Function):Tween<Node> {
+
+        this.setDoneCallback(callback);
+
         let own = data.own;
-        
         let config = data.animCfg;
         let params = config.params;
         let duration:number= params[0];
@@ -25,6 +27,7 @@ export class AcitonJump extends ActionBase {
         let _middlePos = this._getMiddlePos(tarPos);
         let _scale = this._getScale(own);
         let _endPos = this._getEndPos(own,tarPos,new Vec3(...offset));
+
         return tween().parallel(
             tween().to(duration/2,{
                     position:_middlePos
@@ -75,7 +78,5 @@ export class AcitonJump extends ActionBase {
         }else if (own.camp == FightConstant.FightUnitType.Defend){
             return tarPos.add(offset)
         }
-
-        
     }
 }

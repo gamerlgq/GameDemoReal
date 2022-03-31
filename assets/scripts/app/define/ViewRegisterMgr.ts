@@ -6,7 +6,6 @@
  * @Description: file content
  */
 
-import { log, Prefab } from "cc";
 import { Singleton } from "../../framework/components/Singleton";
 import { DialogCreator } from "../views/dialog/Creator";
 import { LoginCreator } from "../views/login/Creator";
@@ -25,6 +24,7 @@ type ViewConfig = {
     path: string;//预制体路径
     isShowBg?: boolean;//是否显示背景(默认false不现实背景)
     isCache?: boolean;//是否永久缓存(默认false不永久缓存) 手动管理是否释放
+    batch?: Array<number>;//批量[start,end](hero_个);
 }
 
 interface ViewRegMgrInterface {
@@ -39,13 +39,16 @@ interface ViewRegMgrInterface {
 
 
 export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
-    // 预加载的预制体
+    // 登陆预加载的预制体
     static PreloadResList = {
         commonUI:1,
         dialog:1,
         maincity:1,
         loading:1
     }
+
+    // 战斗预加载的预制体
+    static FightPreloadResList = ["formation","fight","hero"]
 
     // 注册预页面预制体路径
     ViewType = {
@@ -64,7 +67,7 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
                     path: "common_ui/prefabs/TouchEffect",
                     isCache: true
                 }
-            },
+            }
         },
 
         // 登陆
@@ -157,7 +160,8 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
         hero: {
             prefab: {
                 "HeroSpinePrefab": {
-                    path: "hero/prefabs/hero/"
+                    path: "hero/prefabs/hero/",
+                    
                 }
             }
         },
@@ -165,7 +169,8 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
         formation: {
             prefab: {
                 "FormationView": {
-                    path: "formation/prefabs/formation"
+                    path: "formation/prefabs/formation",
+                    batch:[1,3]
                 }
             }
         },
@@ -233,6 +238,30 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
             }
         })
         return list;
+    }
+
+    getFightPreloadRes():Array<string>{
+        return ViewRegisterMgr.FightPreloadResList;
+        // let list:Array<string> = new Array<string>();
+        // Object.keys(this.ViewType).forEach((system:string)=>{
+        //     if (ViewRegisterMgr.FightPreloadResList[system]) {
+        //         let module = this.ViewType[system];
+        //         Object.keys(module.prefab).forEach((view:string)=>{
+        //             let viewConfig = <ViewConfig>module.prefab[<string><unknown>view];
+        //             if (viewConfig.batch) {
+        //                 if (system == "hero"){
+        //                     for (let index = viewConfig.batch[0]; index <= viewConfig.batch[1]; index++) {
+        //                         let path = viewConfig.path + "hero_" + index;
+        //                         list.push(path);        
+        //                     }
+        //                 }
+        //             }else{
+        //                 list.push(viewConfig.path);
+        //             }
+        //         })
+        //     }
+        // })
+        // return list;
     }
 
 
