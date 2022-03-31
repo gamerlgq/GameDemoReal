@@ -10,19 +10,19 @@ export default class Logger {
         this._lv = value;
     }
 
-    static i(message:any) {
+    static i(message:any, ...op:any[]) {
         if (this.lv >= 3) {
             if (sys.isNative) {
                 if (typeof(message) === "object") {
                     let s = JSON.stringify(message)
-                    log(s)
+                    log(s, op)
                 }
                 else{
-                    log(message)
+                    log(message,op)
                 }
             }
             else{
-                log(message)
+                log(message, op)
             }
         }
     }

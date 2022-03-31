@@ -3,6 +3,7 @@ import { singletonMgr } from "../framework/components/SingletonMgr";
 import { audioMgr } from "../framework/core/audio/AudioManager";
 import { gameMgr } from "../framework/core/GameMgr";
 import { sceneMgr } from "../framework/core/SceneMgr";
+import { languageManager, LanguageManager } from "../framework/language/Language";
 import { netLoadingMgr } from "../framework/net/NetLoadingMgr";
 import { translateMgr } from "../framework/translate/TranslateMgr";
 import { GameConfig } from "../GameConfig";
@@ -68,7 +69,7 @@ export class EnterApp {
             // logDot(DotIDS.configLoadingFinish);
             this.loadAllModel();
             this.loadAllRedGuide();
-            this.loadTranslate();
+            this.done();
         });
     }
 
@@ -78,11 +79,6 @@ export class EnterApp {
 
     loadAllModel() {
         modelRegisterMgr.loadAllModel();
-        this.done();
-    }
-
-    loadTranslate() {
-        translateMgr.loadCodeCfg("Translate");
     }
 
     done() {

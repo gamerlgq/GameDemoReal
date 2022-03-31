@@ -5,5 +5,8 @@
   "name": "NewProject",
   "type": "3d",
   "uuid": "9f82b72f-ce42-40e1-b7d8-3e5a9657ed82",
-  "version": "3.4.2"
+  "version": "3.4.2",
+  "dependencies": {
+    "caniuse-lite": "^1.0.30001320"
+  }
 }
