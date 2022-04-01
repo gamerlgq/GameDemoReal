@@ -46,6 +46,7 @@ class SocketMgr extends Singleton {
         try {
             let url = `ws://${ip}:${port}`;
             let ws = new WebSocket(url);
+            ws.binaryType = "arraybuffer" //字节流
             this._ws = ws;
             ws.onopen = (event) => {
                 this._onopen(event);

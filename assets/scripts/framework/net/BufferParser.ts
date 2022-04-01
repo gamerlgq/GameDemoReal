@@ -105,8 +105,7 @@ export default class BufferParser {
         }
     }
 
-    generateParseData(dataSer) {
-        let arrayBuffer = str2ab(dataSer)
+    generateParseData(arrayBuffer) {
         this._dataView = new DataView(arrayBuffer)
 
         let msgId = this._dataView.getUint16(0, sys.isLittleEndian)
