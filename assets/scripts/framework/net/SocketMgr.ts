@@ -28,8 +28,6 @@ class SocketMgr extends Singleton {
     private _ip: string;
     private _port: string;
 
-    private _sendBuffer: ArrayBuffer = new ArrayBuffer(BUFF_SIZE) //发送缓冲区
-
     private constructor() {
         super();
         // net state change callback

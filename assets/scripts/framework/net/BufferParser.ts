@@ -172,6 +172,8 @@ export default class BufferParser {
                 let arrayBufferTemp = arrayBuffer.slice(this._length, strLen)
                 let str = decodeUtf8(arrayBufferTemp)
                 dataParse[name] = str
+
+                this._length += strLen
             }
             else if (typeStr == "array") {
                 dataParse = this._parseData(element.fields, arrayBuffer, dataParse)
