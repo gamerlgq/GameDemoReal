@@ -17,11 +17,18 @@ module.exports = {
      * @param data {name:string,info | uuid:string}
      */
     onClick(data:any){
-        console.warn("只能添加resources bundle下的资源预加载!!!其他bundle需要手动加载")
-        console.warn("添加预加载:默认是追加模式，如果需要重新写入preload.json,则需要先删除文件，再逐个文件夹添加")
         let dir = <string>data.info.url;
+        if (dir.search("resources") == -1) {
+            console.warn("添加预加载:只允许在resources bundle下使用!,其他bundle需要手动加载!!!");
+            return
+        }
+        if (dir == "db://assets/resources") {
+            console.warn("添加预加载:不能把resources bundle下的所有资源都加入预加载!!!");
+            return
+        }
+        console.log("添加预加载:默认是追加模式，如果需要重新写入preload.json,则需要先删除文件，再逐个文件夹添加。")
         queryAsset(dir);
-        console.warn("添加预加载:添加"+dir+"完成!");
+        console.log("添加预加载:添加"+dir+"完成!");
     },
 }
 

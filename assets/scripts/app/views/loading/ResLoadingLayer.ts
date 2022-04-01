@@ -29,7 +29,6 @@ export class ResLoadingLayer extends Component {
     }
     
     private _startPreload() {
-        log(this._loadingResList,"this._loadingResList");
         if (!this._loadingResList || this._loadingResList.length == 0){
             return this._goGameView();
         }
