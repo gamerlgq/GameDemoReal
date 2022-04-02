@@ -1,7 +1,11 @@
-import { log } from "cc";
+import { log, sys } from "cc";
+import { Proto } from "../../app/define/proto_mate";
 import { Singleton } from "../components/Singleton";
 import { gameMgr } from "../core/GameMgr";
 import { Message } from "../listener/Message";
+import { decodeUtf8, encodeUtf8, str2ab } from "../utils/functions";
+import Logger from "../utils/Logger";
+import BufferParser from "./BufferParser";
 import { netLoadingMgr } from "./NetLoadingMgr";
 import { netStateMgr } from "./NetStateMgr";
 
@@ -14,9 +18,10 @@ import { netStateMgr } from "./NetStateMgr";
  */
 
 export type SocketCallback = {
-    (event: any):void
+    (event: any): void
 }
 
+const BUFF_SIZE = 1024 * 2;
 class SocketMgr extends Singleton {
     private _ws: WebSocket;
     private _StateChangeCallback: SocketCallback;
@@ -30,15 +35,16 @@ class SocketMgr extends Singleton {
             StateChangeCallback: this._listenOnSocketState.bind(this),
         };
         this.registerCallbackHandler(socketParams);
-        
+
     }
 
-    connect( ip: string,port: string,openFunc:SocketCallback,errorFunc:SocketCallback) {
+    connect(ip: string, port: string, openFunc: SocketCallback, errorFunc: SocketCallback) {
         this._ip = ip;
         this._port = port;
         try {
             let url = `ws://${ip}:${port}`;
             let ws = new WebSocket(url);
+            ws.binaryType = "arraybuffer" //字节流
             this._ws = ws;
             ws.onopen = (event) => {
                 this._onopen(event);
@@ -65,8 +71,8 @@ class SocketMgr extends Singleton {
             this.connect(
                 this._ip,
                 this._port,
-                (event) => {},
-                (event) => {log(event);}
+                (event) => { },
+                (event) => { log(event); }
             );
         }
     }
@@ -78,14 +84,27 @@ class SocketMgr extends Singleton {
         }
     }
 
-    send(msgId: number, data: Object = {}) {
-        data["proto"] = msgId;
-        data = JSON.stringify(data);
-        log("[WS] Send:", msgId, data);
-        this._ws.send(<string>data);
+    // send(msgId: number, data: Object = {}) {
+    //     data["proto"] = msgId;
+    //     data = JSON.stringify(data);
+    //     log("[WS] Send:", msgId, data);
+    //     this._ws.send(<string>data);
 
-        netLoadingMgr.addMsgLoading(msgId)
+    //     netLoadingMgr.addMsgLoading(msgId)
+    // }
+
+    send(msgId: number, ...sendParams: any[]) {
+       
+        let bufferParser = new BufferParser
+        let arrbuffSend = bufferParser.generateMsgArrayBuffer(msgId, sendParams)
+        if (!arrbuffSend) {
+            return
+        }
+
+        this._ws.send(arrbuffSend);
+        Logger.net("====>msg:" + msgId + " [" + sendParams + "]")
     }
+
 
     sendInnerMsg(msgId: number, data: Object = {}) {
         let msg = new Message(msgId, data);
@@ -100,7 +119,7 @@ class SocketMgr extends Singleton {
     /**
      * 监听Socket 状态变化
      */
-     private _listenOnSocketState(event) {
+    private _listenOnSocketState(event) {
         netStateMgr.onSocketChange(event);
     }
 
@@ -119,12 +138,14 @@ class SocketMgr extends Singleton {
             log(event);
             return;
         }
-        let jsonData = JSON.parse(data);
-        log("[WS] Rev:", jsonData.proto, data);
-        let msg = new Message(-jsonData.proto, jsonData);
+
+        let bufferParser = new BufferParser()
+        let dataParse = bufferParser.generateParseData(data)
+        let msg = new Message(bufferParser.msgId, dataParse);
         gameMgr.addNetMessage(msg);
 
         netLoadingMgr.removeMsgLoading(msg.msgId)
+        Logger.net("<==== msgId:" + bufferParser.msgId + '['+dataParse+']')
     }
 
     private _onerror(event) {
@@ -148,6 +169,6 @@ class SocketMgr extends Singleton {
 }
 
 // ()();
-export let socketMgr = (()=>{
+export let socketMgr = (() => {
     return SocketMgr.getInstance<SocketMgr>();
 })();

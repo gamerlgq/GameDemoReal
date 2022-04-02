@@ -41,7 +41,7 @@ export default class Logger {
 
     static net(message:any) {
         if (this.lv >=4) {
-            log(message)
+            log("NET: ",message)
         }
     }
 }
