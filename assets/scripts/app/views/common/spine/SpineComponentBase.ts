@@ -209,7 +209,7 @@ export class SpineComponentBase extends ComponentBase {
      */
     public updateBlood(cur:number,top:number) {
         let com = this._root.getComponentInChildren(FightBloodUI);
-        com!.updateBlood(cur,top);
+        com?.updateBlood(cur,top);
     } 
     
     /**

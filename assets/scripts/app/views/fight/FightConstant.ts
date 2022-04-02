@@ -7,6 +7,10 @@
  */
 
 export namespace FightConstant {
+
+    // 是否开启技能编辑器
+    export const Open_Fight_Editor:boolean = true;
+
     // 战斗场景层级
     export enum FightLayer {
         FORMATION,//布阵层
@@ -55,6 +59,26 @@ export namespace FightConstant {
         Show,//显示
         Move,//移动
         Jump,//跳跃
+    }
+
+    // 单位acion id对应的字符串；
+    export const FightUnitActionString = {
+        AddPrefab:FightUnitAction.AddPrefab,//添加预制体
+        Delay:FightUnitAction.Delay,//延迟
+        SpineAnimation:FightUnitAction.SpineAnimation,//特殊动作指令,每个spine角色不一样
+        Color:FightUnitAction.Color,//颜色变化
+        GoBack:FightUnitAction.GoBack,//返回阵位
+        Hide:FightUnitAction.Hide,//消失
+        Show:FightUnitAction.Show,//显示
+        Move:FightUnitAction.Move,//移动
+        Jump:FightUnitAction.Jump,//跳跃
+    }
+
+    // 单位effect添加部位 
+    export enum FightUnitEffectPart {
+        Front, //胸前,默认
+        Floot, //脚底
+        Head, // 头部
     }
 
     // 攻击action
@@ -107,6 +131,8 @@ export namespace FightConstant {
         Attack_End,//攻击结束
         Result_Start,//攻击结果开始
         Result_End,//攻击结果结束
-        Blood_Change,//雪条变化
+        Single_Action_Done,//单个action结束
+        Blood_Change,//血条变化
+        Show_Dialog//显示对话
     }
 }

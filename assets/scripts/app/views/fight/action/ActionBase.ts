@@ -1,3 +1,6 @@
+import { FightEvent } from "../event/FightEvent";
+import { fightEventMgr } from "../event/FightEventMgr";
+import { FightConstant } from "../FightConstant";
 
 interface IAction {
     setDoneCallback(callback:Function):void;
@@ -20,7 +23,12 @@ export class ActionBase implements IAction{
         if (this._doneCallback) {
             this._doneCallback()
         }       
+        this._send();
         this.clean();
+    }
+
+    private _send() {
+        fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Single_Action_Done,null));
     }
 
     // 做一些清理工作

@@ -2,6 +2,7 @@ import { Component, error, log, Node, UITransform } from "cc";
 import { UIWidget } from "../../../framework/ui/UIWidget";
 import { FightConstant } from './FightConstant';
 import { BloodLayer } from "./layer/BloodLayer";
+import { DialogLayer } from "./layer/DialogLayer";
 import { FomationLayer } from "./layer/FomationLayer";
 import { RoleLayer } from "./layer/RoleLayer";
 import { TopEffectLayer } from "./layer/TopEffectLayer";
@@ -17,6 +18,8 @@ export class FightMainWorld extends Node{
     private _topEffectLayer:TopEffectLayer = null;
 
     private _bloodLayer:BloodLayer = null;
+
+    private _dialogLayer:DialogLayer = null;
 
     /**
      * @description 初始化
@@ -62,6 +65,10 @@ export class FightMainWorld extends Node{
         // 上册技能层
         this._bloodLayer = this.addCommonentInLayer(FightConstant.FightLayer.BLOOD,BloodLayer);
         this._bloodLayer.init();
+
+        // 对话框层
+        this._dialogLayer = this.addCommonentInLayer(FightConstant.FightLayer.DIALOG,DialogLayer);
+        this._dialogLayer.init();
     }
 
     /**

@@ -20,8 +20,8 @@ export class DataRegisterMgr extends Singleton{
          */
         Test:["Test","test/datas/test",[],new Test_Parser()],
         Translate:["Translate","translate/data/translate",[]],
-        FightSkill:["FightSkill","fight/datas/skill/skill_",[1,1]],
-        FightHit:["FightHit","fight/datas/hit/hit_",[1,1]],
+        FightSkill:["FightSkill","fight/datas/skill/skill_",[1,2]],
+        FightHit:["FightHit","fight/datas/hit/hit_",[1,2]],
         FightEmbattled:["FightEmbattled","fight/datas/embattled/embattled_",[1,1]],
         MaincityPreload:["MaincityPreload","maincity/datas/preload",[]]
     }

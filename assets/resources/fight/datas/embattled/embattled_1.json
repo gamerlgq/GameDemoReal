@@ -1,17 +1,5 @@
 {
     "skillTimeline":[
-        [
-            {
-                "layer":"BLOOD",
-                "cmd":"Delay",
-                "params":[0.5]
-            },
-            {
-                "layer":"BLOOD",
-                "cmd":"AddPrefab",
-                "params":["fight/prefabs/effect/numbers",[0,250,0]]
-            }
-        ]
     ],
     "defendUnitTimeline":[
         [

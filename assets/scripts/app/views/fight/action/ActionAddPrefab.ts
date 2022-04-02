@@ -1,12 +1,13 @@
 import { instantiate, log, Node, Prefab, Tween, tween } from "cc";
 import { ResourcesLoader } from "../../../../framework/data/ResourcesLoader";;
-import { BloodEffect, EffectBase } from "../effect/Effect";
+import { EffectBase } from "../effect/Effect";
 import { FightEvent } from "../event/FightEvent";
 import { FightEventDataType } from "../event/FightEventDataType";
 import { fightEventMgr } from "../event/FightEventMgr";
+import { fightBloodMgr } from "../FightBloodMgr";
 import { FightConstant } from "../FightConstant";
 import { ActionBase } from "./Action";
-import { FightActionData, fightActionMgr } from "./FightActionMgr";
+import { FightActionData } from "./FightActionMgr";
 
 
 export class ActionAddPrefab extends ActionBase {
@@ -30,23 +31,54 @@ export class ActionAddPrefab extends ActionBase {
     private _customSetting(data:FightActionData,node:Node,startCallback?:Function,endcallback?:Function){
         let animCfg = data.animCfg;
         let name = animCfg.layer;
-        let tar = data.target;
-        let com:any = null
         switch (name) {
-            case "BLOOD":
-                let args:FightEventDataType.Blood_Change = {
-                    PrefabNode: node,
-                    Data: data
-                }
-                com = node.getComponent(BloodEffect) as BloodEffect;
-                fightEventMgr?.send(new FightEvent(FightConstant.FightEvent.Blood_Change,args))
-                break;
             case "ROLE":
-                com = node.getComponent(EffectBase) as EffectBase;
-                tar.addEffectFront(node);
+                this._setRoleEffect(data,node);
+                break;
+            case "DIALOG":
+                this._setDialog(data,node);
                 break;
         }
+    }
 
+    // 设置角色身上特效
+    private _setRoleEffect(data:FightActionData,node:Node) {
+        let tar = data.target;
+        // let com = node.getComponent(EffectBase) as EffectBase;
+        let config = data.animCfg;
+        let addPart = config[2];//添加部位
+        if (addPart) {
+            switch (addPart) {
+                case FightConstant.FightUnitEffectPart.Front:
+                    tar.addEffectFront(node);
+                    break;
+                case FightConstant.FightUnitEffectPart.Head:
+                    
+                    break;
+                case FightConstant.FightUnitEffectPart.Floot:
+                    tar.addEffectBack(node);
+                    break;
+            }
+        }else{
+            // 默认特效添加在胸前
+            tar.addEffectFront(node);
+        }
+
+        fightBloodMgr.check(data);
+    }
+
+    // 设置对话框
+    private _setDialog(data:FightActionData,node:Node) {
+        let animCfg = data.animCfg;
+        let params:FightEventDataType.Show_Dialog = {
+            PrefabNode: node,
+            Desc: animCfg.params[1]
+        }
+        fightEventMgr?.send(new FightEvent(FightConstant.FightEvent.Show_Dialog,params))
+    }
+
+    // EffectBase 组件有两个 callback 可以设置
+    private _setCallbacks<T extends EffectBase>(com:T,startCallback?:Function,endCallback?:Function) {
         com.setStartCallback(()=>{
             if (startCallback) {
                 startCallback();
@@ -54,12 +86,9 @@ export class ActionAddPrefab extends ActionBase {
         })
 
         com.setEndCallback(()=>{
-            if (endcallback) {
-                endcallback();
+            if (endCallback) {
+                endCallback();
             }
-            node.removeFromParent();
-            node.destroy();
-            node = null;
         });
     }
 }

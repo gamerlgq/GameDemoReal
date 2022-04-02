@@ -6,7 +6,7 @@
  * @Description: file content
  */
 
-import { _decorator,Node, sp, Prefab, instantiate, Vec3, log } from 'cc';
+import { _decorator,Node, sp, Prefab, instantiate, Vec3, log, UIOpacity } from 'cc';
 import { ResourcesLoader } from '../../../../framework/data/ResourcesLoader';
 import { yy } from '../../../define/YYNamespace';
 import { FightConstant } from '../../fight/FightConstant';
@@ -52,6 +52,7 @@ export class SpineNodeBase extends Node {
         super();
         this.addChild(spineNode);
         this._spineCom = this.getComponentInChildren(SpineComponentBase);
+        this.addComponent(UIOpacity);
     }
 
     /**
@@ -85,6 +86,9 @@ export class SpineNodeBase extends Node {
         ResourcesLoader.load(path,(prefab:Prefab)=>{
             let node = instantiate(prefab);
             this._spineCom.addBloodUI(node);
+            if (this._camp == FightConstant.FightUnitType.Defend) {
+                node.setScale(new Vec3(-1,1,1));
+            }
         });
     }
 

@@ -21,7 +21,7 @@ export namespace FightEventDataType {
     }
 
     // 每个action返回的结构[[谁]，[[对哪些人]]，[做了什么],[[结果1],[结果2]]]
-    export interface Attack_Start{
+    export interface Action_Data{
         Who:[number/**阵营*/,number/*孔位*/]
         Attack:any;//攻击action
         Result:any;//结果action
@@ -29,8 +29,13 @@ export namespace FightEventDataType {
 
     //飘血相关
     export interface Blood_Change{
-        PrefabNode:Node;
         Data:FightActionData;
+    }
+
+    // 显示对话框
+    export interface Show_Dialog{
+        PrefabNode:Node;
+        Desc:string;
     }
 
     // 攻击action(攻击描述)
@@ -53,7 +58,7 @@ export namespace FightEventDataType {
                         number/*result action id*/,
                         number/*阵营*/,
                         [
-                            [number/*孔位*/,[number/*hp type*/,number/*result*/]]
+                            [number/*孔位*/,[number/*result action id*/,number/*hp type*/,number/*result*/]]
                         ]
                     ]
         }

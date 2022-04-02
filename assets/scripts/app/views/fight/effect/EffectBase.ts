@@ -35,5 +35,7 @@ export class EffectBase extends Component {
         if (this._endCallback){
             this._endCallback();
         }
+        // 不做清理，保存在内存中
+        this.node.removeFromParent();
     }
 }

@@ -17,7 +17,7 @@ export class AttackActionMgr extends Singleton{
         attackActionMgr = AttackActionMgr.getInstance<AttackActionMgr>();
     }
 
-    public parse(data:FightEventDataType.Attack_Start){
+    public parse(data:FightEventDataType.Action_Data){
         let attackData = data.Attack;
         let attackActionId = attackData[0];
         switch (attackActionId) {
@@ -33,7 +33,7 @@ export class AttackActionMgr extends Singleton{
         }
     }
 
-    private _parseSkill(data:FightEventDataType.Attack_Start) {
+    private _parseSkill(data:FightEventDataType.Action_Data) {
         let attackData = data.Attack;
         let skillId = attackData[1];
         let config = G.getConfig("FightSkill",skillId);
@@ -54,12 +54,50 @@ export class AttackActionMgr extends Singleton{
         }
     } 
 
-    private _runSkillTimelineAction(skillTimeline:Array<any>,data:FightEventDataType.Attack_Start) {
-        
+    private _runSkillTimelineAction(skillTimeline:Array<any>,data:FightEventDataType.Action_Data) {
+        let allTimeLine:Tween<unknown>[] = [];
+        let ownUnit = fightActionMgr.getOwnUnit(data);
+        let attackData = data.Attack;
+        let whom = attackData[2];
+        let tarUnit = null;
+        if (whom.length>0){
+            tarUnit = fightActionMgr.getUnit(whom);
+        }
+            
+        skillTimeline.forEach(animations => {
+            let oneTimeTween = tween();
+            animations.forEach(anim => {
+                let fightActionData:FightActionData = {
+                    own: ownUnit,
+                    target:tarUnit,
+                    result: undefined,
+                    animCfg:anim
+                };
+                let tween = fightActionMgr.getAnimation(fightActionData);
+                oneTimeTween.then(tween);
+            });
+            allTimeLine.push(oneTimeTween);
+        });
+
+        if (allTimeLine.length > 1){
+            let parallel = tween(ownUnit).parallel(...allTimeLine);
+            parallel.call(()=>{
+                log("attack action finished!")
+                // 攻击结束
+                fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Attack_End,data));
+            }).start();
+        }else{
+            let t = allTimeLine[0];
+            t.target(ownUnit).call(()=>{
+                log("attack action finished!")
+                // 攻击结束
+                fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Attack_End,data));
+            }).start();
+        } 
     }
 
 
-    private _runAttackUnitTimelineAction(unitTimeline:Array<any>,data:FightEventDataType.Attack_Start) {
+    private _runAttackUnitTimelineAction(unitTimeline:Array<any>,data:FightEventDataType.Action_Data) {
         let allTimeLine:Tween<unknown>[] = [];
         let ownUnit = fightActionMgr.getOwnUnit(data);
         let attackData = data.Attack;

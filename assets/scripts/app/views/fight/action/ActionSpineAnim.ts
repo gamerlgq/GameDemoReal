@@ -11,9 +11,6 @@ export class ActionSpineAnim extends ActionBase{
     /**
      * 
      * @param data FightActionData
-     * @param actionName 
-     * @param callback 
-     * @param isLoop 
      */
     play(data:FightActionData,callback?:yy.interfaces.SpineTrackEntryCallFunc):Tween<Node>{
         let node = data.own;
@@ -23,17 +20,10 @@ export class ActionSpineAnim extends ActionBase{
         let isLoop = params[1];
         this._callback = callback;
         node.setAnimateEndCallback(this._done.bind(this));
-        // this._checkBloodChange(actionName,data); 
         return tween(node).call(()=>{
             node.play(actionName,isLoop);
         });
     }    
-
-    // private _checkBloodChange(actionName:string,data:FightActionData) {
-    //     if (actionName == yy.macro.HeroAnimate.Hurt) {
-    //         // fightBloodMgr.check(data);
-    //     }
-    // }
 
     private _done(trackEntry:sp.spine.TrackEntry) {
         if (this._callback){

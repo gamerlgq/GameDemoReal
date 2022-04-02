@@ -80,7 +80,13 @@ export class FightMainLayer extends LayerBase {
     }
 
     private _loadMainUI() {
-        let viewInfo = viewRegisterMgr.getViewInfo("fight","FightMainUI");
+        let viewInfo = null;
+        if (FightConstant.Open_Fight_Editor){
+            viewInfo = viewRegisterMgr.getViewInfo("fight","FightEditorUI");
+        }else{
+            viewInfo = viewRegisterMgr.getViewInfo("fight","FightMainUI");
+        }
+        
         ResourcesLoader.loadWithViewInfo(viewInfo,(data:Prefab)=>{
             let uiNode = instantiate(data);
             this._content.addChild(uiNode);

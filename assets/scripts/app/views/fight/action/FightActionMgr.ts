@@ -10,6 +10,8 @@ import { FightMainWorld } from "../FightMainWorld";
 import { FightLayerBase } from "../layer/FightLayerBase";
 import { RoleLayer } from "../layer/RoleLayer";
 import { AcitonJump, ActionAddPrefab, ActionBase, ActionDelay, ActionGoBack, ActionMove, ActionSpineAnim } from "./Action";
+import { ActionHide } from "./ActionHide";
+import { ActionShow } from "./ActionShow";
 import { attackActionMgr, AttackActionMgr } from "./AttackActionMgr";
 import { resultActionMgr, ResultActionMgr } from "./ResultActionMgr";
 
@@ -58,7 +60,7 @@ export class FightActionMgr extends Singleton{
         if (!this._fightMainWorld){
             this._fightMainWorld = this._fightMainLayer.getFightMainWorld();
         }
-        let data:FightEventDataType.Attack_Start = event.getEventData();
+        let data:FightEventDataType.Action_Data = event.getEventData();
         this._parseAttack(data);
     }
 
@@ -68,7 +70,7 @@ export class FightActionMgr extends Singleton{
     }
 
     private _onResultStart(event:FightEvent) {
-        let data:FightEventDataType.Attack_Start = event.getEventData();
+        let data:FightEventDataType.Action_Data = event.getEventData();
         this._parseResult(data);
     }
 
@@ -78,7 +80,7 @@ export class FightActionMgr extends Singleton{
         fightEventMgr.send(new FightEvent(FightConstant.FightEvent.Action_End,null));
     }
 
-    private _parseAttack(data:FightEventDataType.Attack_Start) {
+    private _parseAttack(data:FightEventDataType.Action_Data) {
         attackActionMgr.parse(data);
     }
 
@@ -86,7 +88,7 @@ export class FightActionMgr extends Singleton{
      * 
      * @param data 播放结果
      */
-    private _parseResult(data:FightEventDataType.Attack_Start) {
+    private _parseResult(data:FightEventDataType.Action_Data) {
         resultActionMgr.parse(data);
     } 
 
@@ -117,10 +119,12 @@ export class FightActionMgr extends Singleton{
 
             case FightConstant.FightUnitAction.Hide:
                 
-                return;
+                return this.getUnitAction(ActionHide).hide(animCfg.params[0]);
+
             case FightConstant.FightUnitAction.Show:
                 
-                return;
+                return this.getUnitAction(ActionShow).show(animCfg.params[0]);
+
             case FightConstant.FightUnitAction.Move:
 
                 return this.getUnitAction(ActionMove).move(data);
@@ -138,7 +142,7 @@ export class FightActionMgr extends Singleton{
         return anim
     }
 
-    public getOwnUnit(data:FightEventDataType.Attack_Start):HeroSpineNode {
+    public getOwnUnit(data:FightEventDataType.Action_Data):HeroSpineNode {
         return this.getUnit(data.Who);
     }
 
@@ -164,37 +168,7 @@ export class FightActionMgr extends Singleton{
     }
 
     private _getUnitActionEnumByName(name:string):number{
-        let cmdEnum = 0;
-        switch (name) {
-            case "AddPrefab":
-                cmdEnum = FightConstant.FightUnitAction.AddPrefab;
-                break;
-            case "Delay":
-                cmdEnum = FightConstant.FightUnitAction.Delay;
-                break;
-            case "SpineAnimation":
-                cmdEnum = FightConstant.FightUnitAction.SpineAnimation;
-                break;
-            case "Color":
-                cmdEnum = FightConstant.FightUnitAction.Color;
-                break;
-            case "GoBack":
-                cmdEnum = FightConstant.FightUnitAction.GoBack;
-                break;
-            case "Hide":
-                cmdEnum = FightConstant.FightUnitAction.Hide;
-                break;
-            case "Show":
-                cmdEnum = FightConstant.FightUnitAction.Show;
-                break;
-            case "Move":
-                cmdEnum = FightConstant.FightUnitAction.Move;
-                break;
-            case "Jump":
-                cmdEnum = FightConstant.FightUnitAction.Jump;
-                break;
-        }
-        return cmdEnum;
+        return FightConstant.FightUnitActionString[name]
     }
 
     /**

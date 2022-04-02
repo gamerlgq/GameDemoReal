@@ -34,7 +34,7 @@ export class ResultActionMgr extends Singleton{
         };
     }
 
-    public parse(data:FightEventDataType.Attack_Start){
+    public parse(data:FightEventDataType.Action_Data){
         
         let resultDatas = data.Result;
 
@@ -46,7 +46,7 @@ export class ResultActionMgr extends Singleton{
         };
     }
 
-    private _getAnimationConfig(data:FightEventDataType.Attack_Start,resultData:any) {
+    private _getAnimationConfig(data:FightEventDataType.Action_Data,resultData:any) {
 
         let attackData = data.Attack;
         let skillId = attackData[1];
@@ -83,7 +83,7 @@ export class ResultActionMgr extends Singleton{
         }
     }
 
-    private _parseResultAction(data:FightEventDataType.Attack_Start,config:any,resultData:any) {
+    private _parseResultAction(data:FightEventDataType.Action_Data,config:any,resultData:any) {
 
         // 全局技能时间轴
         let skillTimeline = config.skillTimeline;
@@ -98,7 +98,7 @@ export class ResultActionMgr extends Singleton{
         }
     }
 
-    private _runSkillTimelineAction(skillTimeline:Array<any>,data:FightEventDataType.Attack_Start,resultData:any) {
+    private _runSkillTimelineAction(skillTimeline:Array<any>,data:FightEventDataType.Action_Data,resultData:any) {
         let allTimeLine:Tween<unknown>[] = [];
         let camp = resultData[1];
         let targets = resultData[2];
@@ -110,7 +110,6 @@ export class ResultActionMgr extends Singleton{
 
         for (let index = 0; index < tarUnits.length; index++) {
             const tarUnit = tarUnits[index];
-            this._parseResultDataRecord.targetNum = index + 1;
             skillTimeline.forEach(animations => {
                 let oneTimeTween = tween();
                 animations.forEach(anim => {
@@ -137,7 +136,7 @@ export class ResultActionMgr extends Singleton{
         }    
     }
 
-    private _runUnitDefendimelineAction(unitTimeline:Array<any>,data:FightEventDataType.Attack_Start,resultData:any) {
+    private _runUnitDefendimelineAction(unitTimeline:Array<any>,data:FightEventDataType.Action_Data,resultData:any) {
         let allTimeLine:Tween<unknown>[] = [];
            let camp = resultData[1];
         let targets = resultData[2];
@@ -152,6 +151,7 @@ export class ResultActionMgr extends Singleton{
 
             const tarUnit = tarUnits[index];
             let target = targets[index];
+            this._parseResultDataRecord.targetNum = index + 1;
             unitTimeline.forEach(animations => {
                 let oneTimeTween = tween();
                 animations.forEach(anim => {
@@ -184,7 +184,7 @@ export class ResultActionMgr extends Singleton{
         }
     }
 
-    private _endCallback(data:FightEventDataType.Attack_Start) {
+    private _endCallback(data:FightEventDataType.Action_Data) {
         if (this._checkIsEnd(data)){
             log("result action finished!")
             // 结果结束
@@ -192,7 +192,7 @@ export class ResultActionMgr extends Singleton{
         }
     }
 
-    private _checkIsEnd(data:FightEventDataType.Attack_Start):boolean {
+    private _checkIsEnd(data:FightEventDataType.Action_Data):boolean {
         let resultData = data?.Result;
         // 最后一个结果
         if (this._parseResultDataRecord.resultNum == resultData?.length){

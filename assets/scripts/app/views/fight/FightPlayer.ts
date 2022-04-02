@@ -38,7 +38,7 @@ export class FightPlayer extends Singleton{
         let who = data[0];
         let attack = data[1];
         let result = data[2];
-        let args:FightEventDataType.Attack_Start = {
+        let args:FightEventDataType.Action_Data = {
             Who: who,
             Attack: attack,
             Result: result

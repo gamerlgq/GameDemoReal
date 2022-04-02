@@ -1,5 +1,5 @@
 
-import { _decorator, Component, Node, ProgressBar, Label, js } from 'cc';
+import { _decorator, Component, Node, ProgressBar, Label, js, log } from 'cc';
 const { ccclass, property } = _decorator;
 
  
@@ -13,7 +13,7 @@ export class FightBloodUI extends Component {
     lblBlood:Label = null;
 
     updateBlood(cur:number,top:number){
-        let percent = cur / top * 100;
+        let percent = cur / top;
         this.progressBar.progress = percent;
         this.lblBlood.setString(js.formatStr("%d/%d",cur,top));
     }

@@ -1,0 +1,8 @@
+{
+    "name":"连续打击",
+    "skillAnimation":"2",
+    "embattledAnimation":"1",
+    "dodgeAnimation":"1",
+    "blockAnimation":"1",
+    "hitbackAnimation":"1"
+}

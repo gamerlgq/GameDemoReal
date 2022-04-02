@@ -41,17 +41,7 @@ interface ViewRegMgrInterface {
 
 
 export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
-    // 登陆预加载的预制体
-    static PreloadResList = {
-        commonUI:1,
-        dialog:1,
-        maincity:1,
-        loading:1,
-        fight:1,
-        formation:1,
-        hero:1
-    }
-
+  
     // 注册预页面预制体路径
     ViewType = {
         // 通用ui
@@ -152,6 +142,9 @@ export class ViewRegisterMgr extends Singleton implements ViewRegMgrInterface {
                 },
                 "FightMainUI": {
                     path: "fight/prefabs/changjing/mainfightui"
+                },
+                "FightEditorUI": {
+                    path: "fight/prefabs/changjing/fighteditorui"
                 },
                 "FightFormation": {
                     path: "fight/prefabs/changjing/FightFormation"
